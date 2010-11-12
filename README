@@ -1,0 +1,92 @@
+
+1. Japanese Address Data which can be used with pgGeocoder 
+   is downloadable from here:
+
+http://nlftp.mlit.go.jp/isj/index.html
+
+
+2. pgGeocoder requires the following tables:
+
+
+         Table "public.address_t"
+  Column   |       Type        | Modifiers 
+-----------+-------------------+-----------
+ todofuken | text               | 
+ lat       | double precision   | 
+ lon       | double precision   | 
+ ttable    | character varying  |
+ 
+ 
+           Table "public.address_s"
+   Column    |       Type       | Modifiers 
+-------------+------------------+-----------
+ todofuken   | text             | 
+ shikuchoson | text             | 
+ lat         | double precision | 
+ lon         | double precision | 
+
+Indexes:
+    "as1" btree (todofuken)
+ 
+          Table "public.address_o"
+   Column    |       Type       | Modifiers 
+-------------+------------------+-----------
+ todofuken   | text             | 
+ shikuchoson | text             | 
+ ooaza       | text             | 
+ lat         | double precision | 
+ lon         | double precision | 
+ tr_ooaza    | text             |
+
+Indexes:
+    "ao1" btree (todofuken)
+    "ao2" btree (shikuchoson)
+    "ao3" btree (ooaza)
+ 
+          Table "public.address"
+    Column    |       Type       | Modifiers 
+--------------+------------------+-----------
+ todofuken    | text             | 
+ shikuchoson  | text             | 
+ ooaza        | text             | 
+ chiban       | text             | 
+ lat          | double precision | 
+ lon          | double precision | 
+
+Indexes:
+    "a1" btree (todofuken)
+    "a2" btree (shikuchoson)
+    "a3" btree (ooaza)
+    "a4" btree (chiban)
+
+
+  running createTables.sql will automatically build these tables,
+  but without the indexes.
+
+ 
+3. populate these tables with the Japanese address data. An import 
+   script might have to be created in order to accomplish this.
+
+4. run the maintTables.sql to create indexes and update the ttable
+   field in the address_t table to point to the address table. 
+   For performance, it is adviasable to create smaller tables out 
+   of the address table (example: create table by prefecture) rather 
+   than 1 big table. The ttable field tells pgGeocoder which table 
+   holds the prefecture chiban data.
+
+5. run VACUUM ANALYZE; and then VACUUM FULL;
+
+6. run pgGeocoder.sql to install the Geocoder functions.
+
+7. normalize the Ooaza names by running:
+
+    update address_o set tr_ooaza = normalizeAddr(ooaza);
+
+8. geocode an address
+
+select * from geocoder('神奈川県横浜市西区みなとみらい３−６−３'); code |     x      |     y     |                 address                 | todofuken | shikuchoson |       ooaza        | chiban | go 
+------+------------+-----------+-----------------------------------------+-----------+-------------+--------------------+--------+----
+    2 | 139.632761 | 35.458281 | 神奈川県横浜市西区みなとみらい三丁目6番 | 神奈
+川県  | 横浜市西区  | みなとみらい三丁目 | 6      | 
+(1 row)
+
