@@ -419,7 +419,7 @@ BEGIN
    
    EXECUTE tmpstr1 into rec;
       
-  IF rec.x IS NOT NULL AND rec.y IS NOT NULL THEN
+  IF rec.lon IS NOT NULL AND rec.lat IS NOT NULL THEN
     output.code       := 1;
     output.x          := rec.lon;
     output.y          := rec.lat;
