@@ -416,7 +416,7 @@ BEGIN
    'shikuchoson = ' || quote_literal(r_shikuchoson) || ' AND ' ||
    'ooaza       = ' || quote_literal(r_ooaza)       || ' AND ' ||
    'chiban      = ' || quote_literal(tmpstr3);
-   
+
    EXECUTE tmpstr1 into rec;
       
   IF rec.lon IS NOT NULL AND rec.lat IS NOT NULL THEN

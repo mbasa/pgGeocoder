@@ -27,3 +27,17 @@ create index address1 on address(todofuken);
 create index address2 on address(shikuchoson);
 create index address3 on address(ooaza);
 create index address4 on address(chiban);
+
+--
+-- for Reverse Geocoding
+--
+create extension postgis;
+--
+alter table address add column geog geography('POINT');
+update address set geog = geography( st_setsrid(st_makepoint(lon,lat),4326) );
+create index address_g_ndx on address using gist( geog );
+
+--
+-- Vacuuming everything
+--
+VACUUM FULL;
