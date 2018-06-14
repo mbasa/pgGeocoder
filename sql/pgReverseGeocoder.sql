@@ -81,7 +81,7 @@ BEGIN
     todofuken||shikuchoson||ooaza||chiban AS address,
     st_distance(st_setsrid(st_makepoint( mLon,mLat),4326)::geography,geog) AS dist 
     FROM address  
-    WHERE st_dwithin(st_setsrid(st_makepoint(mLon,mLat),4326)::geography,geog,50) 
+    WHERE st_dwithin(st_setsrid(st_makepoint(mLon,mLat),4326)::geography,geog,mDist) 
     ORDER BY dist LIMIT 1;
     
   IF FOUND THEN
