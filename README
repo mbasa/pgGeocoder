@@ -76,7 +76,8 @@ Indexes:
 
 5. run VACUUM ANALYZE; and then VACUUM FULL;
 
-6. run pgGeocoder.sql to install the Geocoder functions.
+6. run pgGeocoder.sql to install the Geocoder functions. Run the pgReverseGeocoder.sql to
+   install the Reverse Geocoder functions.
 
 7. normalize the Ooaza names by running:
 
@@ -84,9 +85,27 @@ Indexes:
 
 8. geocode an address
 
-select * from geocoder('神奈川県横浜市西区みなとみらい３−６−３'); code |     x      |     y     |                 address                 | todofuken | shikuchoson |       ooaza        | chiban | go 
+select * from geocoder('神奈川県横浜市西区みなとみらい３−６−３');
+ code |     x      |     y     |                 address                 | todofuken | shikuchoson |       ooaza        | chiban | go 
 ------+------------+-----------+-----------------------------------------+-----------+-------------+--------------------+--------+----
     2 | 139.632761 | 35.458281 | 神奈川県横浜市西区みなとみらい三丁目6番 | 神奈
 川県  | 横浜市西区  | みなとみらい三丁目 | 6      | 
 (1 row)
 
+9. reverse geocode a coordinate (lon,lat)
+
+select * from reverse_geocoder(141.342094,43.050264 );
+ code |     x      |     y     |                address                 | todofuken | shikuchoson  |      ooaza       | chiban | go 
+------+------------+-----------+----------------------------------------+-----------+--------------+------------------+--------+----
+    1 | 141.342094 | 43.050264 | 北海道札幌市中央区南七条西十一丁目1281 | 北海道    | 札幌市中央区 | 南七条西十一丁目 | 1281   | 
+(1 row)
+
+10. reverse geocode a coordinate and specify search distance in meters (lon,lat,meters)
+
+select * from reverse_geocoder(141.342094,43.050264, 50 );
+ code |     x      |     y     |                address                 | todofuken | shikuchoson  |      ooaza       | chiban | go 
+------+------------+-----------+----------------------------------------+-----------+--------------+------------------+--------+----
+    1 | 141.342094 | 43.050264 | 北海道札幌市中央区南七条西十一丁目1281 | 北海道    | 札幌市中央区 | 南七条西十一丁目 | 1281   | 
+(1 row)
+
+9. reverse
