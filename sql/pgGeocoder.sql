@@ -85,7 +85,7 @@ BEGIN
   IF gc.address <> 'なし' THEN
     output := gc;
     output.code := matching_shikuchoson;
-    gc := searchOoaza( address,output.shikuchoson );
+    gc := searchOoaza( address,output.todofuken,output.shikuchoson );
   ELSE
     RETURN output;
   END IF;
@@ -120,10 +120,10 @@ DECLARE
   address   varchar;
   tmpstr    varchar;
   tmparr    text[];
-  st            integer;
-  en           integer;
-  arrc        integer;
-  arrl         integer;
+  st        integer;
+  en        integer;
+  arrc      integer;
+  arrl      integer;
 BEGIN
   
   address := translate(paddress,
@@ -132,9 +132,9 @@ BEGIN
 
   IF strpos( address, 'X') <> 0 THEN
     tmparr   := string_to_array( address,'X');
-    address := '';
-    arrl        := array_upper( tmparr, 1 ); 
-    arrc       := 1;
+    address  := '';
+    arrl     := array_upper( tmparr, 1 ); 
+    arrc     := 1;
     
     WHILE arrc < arrl  LOOP
             st :=  ascii(substr(tmparr[arrc],length(tmparr[arrc]),1));
@@ -187,6 +187,26 @@ BEGIN
            arrc := arrc + 1;
      END LOOP;
      
+  END IF;
+  
+  --
+  -- For addresses like 北海道札幌市白石区本通１北３
+  --
+  tmpstr := ( regexp_matches(address,'\d[東西南北]\d'))[1];
+  
+  IF tmpstr IS NOT NULL THEN
+    tmparr  := string_to_array( tmpstr,NULL );
+    address := regexp_replace(address,tmpstr,tmparr[1]||'-'||tmparr[2]||tmparr[3]);
+  END IF;
+  
+  --
+  -- For addresses like  北海道札幌市白石区南郷通６北－４
+  --
+  tmpstr := ( regexp_matches(address,'\d[東西南北]-\d'))[1];
+  
+  IF tmpstr IS NOT NULL THEN
+    tmparr  := string_to_array( tmpstr,NULL );
+    address := regexp_replace(address,tmpstr,tmparr[1]||'-'||tmparr[2]||tmparr[4]);
   END IF;
   
   RETURN address;
@@ -290,12 +310,13 @@ $$ LANGUAGE plpgsql;
 --  parameters: address, shikuchoson
 --
 
-CREATE OR REPLACE FUNCTION searchOoaza( character varying,
+CREATE OR REPLACE FUNCTION searchOoaza( character varying, character varying,
                                          character varying ) 
   RETURNS geores AS $$
 DECLARE
   paddress      ALIAS FOR $1;
-  r_shikuchoson ALIAS FOR $2;
+  r_todofuken   ALIAS FOR $2;
+  r_shikuchoson ALIAS FOR $3;
   address       varchar;
   tmpstr        varchar;
   tmpaddr       varchar;
@@ -312,7 +333,8 @@ BEGIN
 
   address := replace(paddress,' ','');
   address := replace(address,'　','');
-
+  address := replace(address,'市字','市');
+  
   tmpstr  := split_part(address,r_shikuchoson,2);
   tmpstr  := tmpstr || '-'; -- to match addresses like 杉並区清水１
   tmpaddr := normalizeAddr( tmpstr );
@@ -323,6 +345,7 @@ BEGIN
   --
 
   SELECT INTO rec *,length(tr_ooaza) AS length FROM address_o WHERE 
+   todofuken = r_todofuken AND
    shikuchoson = r_shikuchoson AND
    strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
 
