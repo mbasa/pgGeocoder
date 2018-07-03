@@ -190,6 +190,14 @@ BEGIN
   END IF;
   
   --
+  -- Adding Kobayashi-san's rule set
+  --
+  address := translate( address,
+    '之ノ治ヰヱ淵渕輿曽藪薮籠篭劔峯峰岡丘富冨祓桧檜莱洲冶治壇檀舘館斉斎竈竃朗鷆膳録嶋崎埼碕庄荘横橫鄕神塚塚都都德福朗郞嶽區溪縣廣斎眞槇槙莊藏龍瀧澤當邊舖萬豫禮茅礪砺',
+    'のの冶いえ渕淵興曾薮藪篭籠剱峰峯丘岡冨富秡檜桧来州治冶檀壇館舘斎斉釜釜郎鷏善禄島埼崎崎荘庄橫横郷神塚塚都都徳福朗郎岳区渓県広斉真槙槇荘蔵竜滝沢当辺舗万予礼芽砺礪'
+  );
+  
+  --
   -- For addresses like 北海道札幌市白石区本通１北３
   --
   tmpstr := ( regexp_matches(address,'\d[東西南北]\d'))[1];
@@ -333,7 +341,12 @@ BEGIN
 
   address := replace(paddress,' ','');
   address := replace(address,'　','');
-  address := replace(address,'市字','市');
+  
+  --
+  -- For Kyoto Addresses which adds an extra '字'
+  IF r_todofuken = '京都府' THEN
+     address := replace(address,'市字','市');  
+  END IF;
   
   tmpstr  := split_part(address,r_shikuchoson,2);
   tmpstr  := tmpstr || '-'; -- to match addresses like 杉並区清水１
