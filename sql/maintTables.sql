@@ -38,10 +38,24 @@ create index address3 on address(ooaza);
 create index address4 on address(chiban);
 
 --
+-- creating index on places
+--
+create index places1 on places(owner);
+create index places2 on places(category);
+create index places3 on places(name);
+
+--
 -- for Reverse Geocoding
 --
 create index address_o_g_idx on address_o using gist( geog );
 create index address_g_idx on address using gist( geog );
+
+--
+-- for Reverse Geocoding in Places 
+--
+alter table places add column geog geography('POINT');
+update places set geog = geography( st_setsrid(st_makepoint(lon,lat),4326) );
+create index places_g_ndx on places using gist( geog );
 
 --
 -- Vacuuming everything

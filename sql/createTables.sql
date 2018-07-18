@@ -41,3 +41,12 @@ create table address (
   lon float,
   geog geography('POINT')
 );
+
+create table places (
+  id serial,
+  owner varchar,
+  category varchar,
+  name varchar,
+  lat float,
+  lon float
+);

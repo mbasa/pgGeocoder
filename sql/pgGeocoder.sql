@@ -76,6 +76,11 @@ BEGIN
 
   IF output.address <> 'なし' THEN
     output.code := matching_todofuken;
+    
+    IF LENGTH( address ) <= 4 THEN
+       RETURN output;
+    END IF;
+    
     gc := searchShikuchoson( address,output.todofuken);
   ELSE
     output.code := matching_nomatch;
@@ -87,6 +92,7 @@ BEGIN
     output.code := matching_shikuchoson;
     gc := searchOoaza( address,output.todofuken,output.shikuchoson );
   ELSE
+    output := searchPlaces( address );
     RETURN output;
   END IF;
 
@@ -222,6 +228,42 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+--
+--  Function to search POIs in the places table
+--  parameters: address
+--
+
+CREATE OR REPLACE FUNCTION searchPlaces(character varying) 
+  RETURNS geores AS $$
+DECLARE
+  paddress ALIAS FOR $1;
+  address  varchar;
+  rec      RECORD;
+  output   geores;
+BEGIN
+
+  output.x         := -999;
+  output.y         := -999;
+  output.code      := -99;
+  output.address   := 'なし';
+
+  address := replace(paddress,' ','');
+  address := replace(address,'　','');
+
+  SELECT INTO rec * FROM places WHERE name LIKE address||'%' 
+    ORDER BY name LIMIT 1;
+
+  IF FOUND THEN
+     output.x         := rec.lon;
+     output.y         := rec.lat;
+     output.address   := rec.name;
+       output.code    := 6;
+  END IF;
+
+  RETURN output;
+END;
+$$ LANGUAGE plpgsql;
 
 --
 --  Function to search Todofuken level of an address
