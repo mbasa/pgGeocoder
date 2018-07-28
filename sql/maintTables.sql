@@ -58,6 +58,11 @@ update places set geog = geography( st_setsrid(st_makepoint(lon,lat),4326) );
 create index places_g_ndx on places using gist( geog );
 
 --
+-- adding a JSONB column to Places
+--
+alter table places add column extra_data jsonb;
+
+--
 -- Vacuuming everything
 --
 VACUUM FULL;
