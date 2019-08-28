@@ -45,6 +45,23 @@ CREATE TYPE geores AS (
 );
 
 
+CREATE OR REPLACE FUNCTION mk_geores( record RECORD) RETURNS geores AS $$
+DECLARE 
+    output geores;
+BEGIN
+     output.x          := record.lon;
+     output.y          := record.lat;
+     output.code       := 1;
+     output.address    := record.address;
+     output.todofuken  := record.todofuken;
+     output.shikuchoson:= record.shikuchoson;
+     output.ooaza      := record.ooaza;
+     output.chiban     := record.chiban;
+     
+     RETURN output;
+END;
+$$ LANGUAGE plpgsql;
+
 --
 --   NOTE: The Address Table must have a column named "geog" of type Geography
 --
@@ -55,11 +72,13 @@ CREATE OR REPLACE FUNCTION reverse_geocoder(
     mDist numeric default 50,
     mAddr boolean default true,
     mCat  varchar default NULL,
-    mOwnr varchar default NULL  ) 
-  RETURNS geores AS $$
+    mOwnr varchar default NULL,
+    mLimit numeric default 1  ) 
+  RETURNS setof geores AS $$
 DECLARE  
   mAddress  varchar;
   record    RECORD;
+  temp_rec  RECORD;
   output    geores;
 BEGIN
 
@@ -75,12 +94,16 @@ BEGIN
         FROM address  
         WHERE st_dwithin(st_setsrid(st_makepoint(mLon,mLat),4326)::geography,geog,mDist) 
         ORDER BY dist LIMIT 1;
+        
+        RETURN NEXT mk_geores( record );        
+        RETURN;
     ELSE
         --
         -- Places Table Search
         --
         IF mCat IS NOT NULL AND mOwnr IS NOT NULL THEN
-            SELECT INTO record '' AS todofuken, '' AS shikuchoson, 
+            FOR record IN 
+            SELECT '' AS todofuken, '' AS shikuchoson, 
                 '' AS ooaza, '' AS chiban,
                 lon, lat,
                 name::text AS address,
@@ -88,10 +111,14 @@ BEGIN
             FROM places  
             WHERE owner = mOwnr AND category = mCat AND 
                 st_dwithin(st_setsrid(st_makepoint(mLon,mLat),4326)::geography,geog,mDist) 
-            ORDER BY dist LIMIT 1;
+            ORDER BY dist LIMIT mLimit LOOP
             
+            RETURN NEXT mk_geores( record ); 
+            
+            END LOOP;
         ELSIF mCat IS NOT NULL AND mOwnr IS NULL THEN
-            SELECT INTO record '' AS todofuken, '' AS shikuchoson, 
+            FOR record IN
+            SELECT '' AS todofuken, '' AS shikuchoson, 
                 '' AS ooaza, '' AS chiban,
                 lon, lat,
                 name::text AS address,
@@ -99,10 +126,15 @@ BEGIN
             FROM places  
             WHERE category = mCat AND 
                 st_dwithin(st_setsrid(st_makepoint(mLon,mLat),4326)::geography,geog,mDist) 
-            ORDER BY dist LIMIT 1;        
+            ORDER BY dist LIMIT mLimit LOOP
+            
+            RETURN NEXT mk_geores( record ); 
+            
+            END LOOP;        
         
         ELSIF mCat IS NULL AND mOwnr IS NOT NULL THEN
-            SELECT INTO record '' AS todofuken, '' AS shikuchoson, 
+            FOR record IN 
+            SELECT '' AS todofuken, '' AS shikuchoson, 
                 '' AS ooaza, '' AS chiban,
                 lon, lat,
                 name::text AS address,
@@ -110,36 +142,30 @@ BEGIN
             FROM places  
             WHERE owner = mOwnr AND  
                 st_dwithin(st_setsrid(st_makepoint(mLon,mLat),4326)::geography,geog,mDist) 
-            ORDER BY dist LIMIT 1;        
+            ORDER BY dist LIMIT mLimit LOOP
+            
+            RETURN NEXT mk_geores( record ); 
+            
+            END LOOP;                
         
         ELSE
-            SELECT INTO record '' AS todofuken, '' AS shikuchoson, 
+            FOR record IN
+            SELECT '' AS todofuken, '' AS shikuchoson, 
                 '' AS ooaza, '' AS chiban,
                 lon, lat,
                 name::text AS address,
                 st_distance(st_setsrid(st_makepoint( mLon,mLat),4326)::geography,geog) AS dist 
             FROM places  
             WHERE st_dwithin(st_setsrid(st_makepoint(mLon,mLat),4326)::geography,geog,mDist) 
-            ORDER BY dist LIMIT 1;
+            ORDER BY dist LIMIT mLimit LOOP
+            
+            RETURN NEXT mk_geores( record ); 
+            
+            END LOOP;        
         END IF;
         
     END IF;
     
-  IF FOUND THEN
-     output.x          := record.lon;
-     output.y          := record.lat;
-     output.code       := 1;
-     output.address    := record.address;
-     output.todofuken  := record.todofuken;
-     output.shikuchoson:= record.shikuchoson;
-     output.ooaza      := record.ooaza;
-     output.chiban     := record.chiban;
-
-    RETURN output;
-  ELSE
-    RETURN NULL;
-  END IF;
-  
 END;
 $$ LANGUAGE plpgsql;
   
