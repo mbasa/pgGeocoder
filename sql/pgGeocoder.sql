@@ -342,16 +342,37 @@ BEGIN
   address := replace(paddress,' ','');
   address := replace(address,'　','');
   
-  --
-  -- For Kyoto Addresses which adds an extra '字'
-  IF r_todofuken = '京都府' THEN
-     address := replace(address,'市字','市');  
-  END IF;
-  
   tmpstr  := split_part(address,r_shikuchoson,2);
   tmpstr  := tmpstr || '-'; -- to match addresses like 杉並区清水１
   tmpaddr := normalizeAddr( tmpstr );
 
+  --
+  -- Trying to parse Kyoto Addresses which contains Directions
+  --
+  IF r_todofuken = '京都府' THEN
+    --
+    -- For Kyoto Addresses which adds an extra '字'
+    --
+    address := replace(address,'市字','市');
+    
+    SELECT INTO rec *,length(tr_ooaza) AS length FROM address_o WHERE 
+    todofuken = r_todofuken AND
+    shikuchoson = r_shikuchoson AND
+    strpos(tmpaddr,tr_ooaza) > 1 ORDER BY length DESC LIMIT 1; 
+
+    IF FOUND THEN
+        output.x          := rec.lon;
+        output.y          := rec.lat;
+        output.code       := 2;
+        output.address    := rec.todofuken||rec.shikuchoson||rec.ooaza;
+        output.todofuken  := rec.todofuken;
+        output.shikuchoson:= rec.shikuchoson;
+        output.ooaza      := rec.ooaza;
+        
+        RETURN output;
+    END IF;  
+  END IF;
+  
   --
   -- the 'Order By length' slows down the operation a bit
   -- but produces more accurate matches.
@@ -369,9 +390,9 @@ BEGIN
      output.address    := rec.todofuken||rec.shikuchoson||rec.ooaza;
      output.todofuken  := rec.todofuken;
      output.shikuchoson:= rec.shikuchoson;
-     output.ooaza      := rec.ooaza;
+     output.ooaza      := rec.ooaza;          
   END IF;
-
+  
   RETURN output;
 
 END;
