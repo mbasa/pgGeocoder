@@ -393,12 +393,6 @@ BEGIN
   address := replace(paddress,' ','');
   address := replace(address,'　','');
   
-  --
-  -- For Kyoto Addresses which adds an extra '字'
-  IF r_todofuken = '京都府' THEN
-     address := replace(address,'市字','市');  
-  END IF;
-  
   tmpstr  := split_part(address,r_shikuchoson,2);
   tmpstr  := tmpstr || '-'; -- to match addresses like 杉並区清水１
   tmpaddr := normalizeAddr( tmpstr );
