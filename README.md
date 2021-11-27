@@ -6,58 +6,55 @@
    http://nlftp.mlit.go.jp/isj/index.html
 2. pgGeocoder requires the following tables:
    ```
-            Table "public.address_t"
-     Column   |       Type        | Modifiers 
-   -----------+-------------------+-----------
-    todofuken | text               | 
-    lat       | double precision   | 
-    lon       | double precision   | 
-    ttable    | character varying  |
+                         Table "public.address_t"
+     Column   |         Type          | Collation | Nullable | Default 
+   -----------+-----------------------+-----------+----------+---------
+    todofuken | character varying(60) |           |          | 
+    lat       | double precision      |           |          | 
+    lon       | double precision      |           |          | 
+    ttable    | character varying(40) |           |          | 
    
    
-              Table "public.address_s"
-      Column    |       Type       | Modifiers 
-   -------------+------------------+-----------
-    todofuken   | text             | 
-    shikuchoson | text             | 
-    lat         | double precision | 
-    lon         | double precision | 
-   
+                          Table "public.address_s"
+      Column    |         Type          | Collation | Nullable | Default 
+   -------------+-----------------------+-----------+----------+---------
+    todofuken   | character varying(60) |           |          | 
+    shikuchoson | character varying(60) |           |          | 
+    lat         | double precision      |           |          | 
+    lon         | double precision      |           |          | 
    Indexes:
-       "as1" btree (todofuken)
+       "address_s1" btree (todofuken)
    
    
-             Table "public.address_o"
-      Column    |       Type       | Modifiers 
-   -------------+------------------+-----------
-    todofuken   | text             | 
-    shikuchoson | text             | 
-    ooaza       | text             | 
-    lat         | double precision | 
-    lon         | double precision | 
-    tr_ooaza    | text             |
-   
+                          Table "public.address_o"
+      Column    |         Type          | Collation | Nullable | Default 
+   -------------+-----------------------+-----------+----------+---------
+    todofuken   | character varying(60) |           |          | 
+    shikuchoson | character varying(60) |           |          | 
+    ooaza       | character varying(60) |           |          | 
+    tr_ooaza    | character varying(60) |           |          | 
+    lat         | double precision      |           |          | 
+    lon         | double precision      |           |          | 
    Indexes:
-       "ao1" btree (todofuken)
-       "ao2" btree (shikuchoson)
-       "ao3" btree (ooaza)
+       "address_o1" btree (todofuken)
+       "address_o2" btree (shikuchoson)
+       "address_o3" btree (ooaza)
    
    
-             Table "public.address"
-       Column    |       Type       | Modifiers 
-   --------------+------------------+-----------
-    todofuken    | text             | 
-    shikuchoson  | text             | 
-    ooaza        | text             | 
-    chiban       | text             | 
-    lat          | double precision | 
-    lon          | double precision | 
-   
+                           Table "public.address"
+      Column    |         Type          | Collation | Nullable | Default 
+   -------------+-----------------------+-----------+----------+---------
+    todofuken   | character varying(60) |           |          | 
+    shikuchoson | character varying(60) |           |          | 
+    ooaza       | character varying(60) |           |          | 
+    chiban      | character varying(60) |           |          | 
+    lat         | double precision      |           |          | 
+    lon         | double precision      |           |          | 
    Indexes:
-       "a1" btree (todofuken)
-       "a2" btree (shikuchoson)
-       "a3" btree (ooaza)
-       "a4" btree (chiban)
+       "address1" btree (todofuken)
+       "address2" btree (shikuchoson)
+       "address3" btree (ooaza)
+       "address4" btree (chiban)
    ```
    running `createTables.sql` will automatically build these tables,
    but without the indexes.
