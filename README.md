@@ -94,7 +94,7 @@
    ```
 9. reverse geocode a coordinate (lon,lat)
    ```sql
-   select * from reverse_geocoder(141.342094,43.050264 );
+   select * from reverse_geocoder(141.342094, 43.050264);
    ```
    ```
     code |     x      |     y     |             address              | todofuken | shikuchoson |     ooaza     | chiban | go 
@@ -104,7 +104,7 @@
    ```
 10. reverse geocode a coordinate and specify search distance in meters (lon,lat,meters)
     ```sql
-    select * from reverse_geocoder(141.342094,43.050264, 50 );
+    select * from reverse_geocoder(141.342094, 43.050264, 50);
     ```
     ```
      code |     x      |     y     |             address              | todofuken | shikuchoson |     ooaza     | chiban | go 
