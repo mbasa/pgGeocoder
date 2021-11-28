@@ -82,7 +82,7 @@ $ psql -U postgres addresses
        2 | 139.632805 | 35.458282 | 神奈川県横浜市西区みなとみらい三丁目6番 | 神奈川県   | 横浜市西区    | みなとみらい三丁目 | 6      | 
    (1 row)
    ```
-- Reverse geocode on address:
+* Reverse geocode on address:
    ```sql
    select * from reverse_geocoder(141.342094, 43.050264);
    ```
@@ -92,7 +92,6 @@ $ psql -U postgres addresses
        1 | 141.341681 | 43.050529 | 北海道札幌市中央区南七条西十一丁目3 | 北海道     | 札幌市中央区  | 南七条西十一丁目 | 3      | 
    (1 row)
    ```
-
 * Reverse geocode a coordinate and specify search distance in meters (lon, lat, meters)
    ```sql
    select * from reverse_geocoder(141.342094, 43.050264, 50);
