@@ -35,6 +35,7 @@
    $ bash scripts/install.sh
    $ bash scripts/download_isj.sh 2020
    $ bash scripts/import_isj.sh 2020
+   $ bash scripts/import_places.sh
    ```
 5. Run maintenance script.
    ```bash

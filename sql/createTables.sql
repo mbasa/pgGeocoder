@@ -42,11 +42,16 @@ create table address (
   geog geography('POINT')
 );
 
+--
+-- for Places 
+--
 create table places (
   id serial,
   owner varchar,
   category varchar,
   name varchar,
   lat float,
-  lon float
+  lon float,
+  details jsonb,
+  geog geography('POINT')
 );

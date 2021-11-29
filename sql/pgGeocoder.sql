@@ -95,13 +95,13 @@ BEGIN
     output.code := matching_shikuchoson;
     gc := searchOoaza( address,output.todofuken,output.shikuchoson );
   ELSE
-    IF output.todofuken IS NOT NULL AND LENGTH(output.todofuken) > 1 THEN
-        RETURN output;
-    END IF;
     --
     -- Places Search (not an address)
     --
-    output := searchPlaces( address );
+    gc := searchPlaces( address );
+    IF gc.address <> 'なし' THEN
+      output :=gc;
+    END IF;
     RETURN output;
   END IF;
 
