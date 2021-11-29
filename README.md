@@ -112,3 +112,8 @@
         1 | 141.342094 | 43.050264 | 北海道札幌市中央区南七条西十一丁目1281 | 北海道     | 札幌市中央区  | 南七条西十一丁目 | 1281   | 
     (1 row)
     ```
+    
+    
+11. For bulk geocoding, wherein addresses located in a field of a table are geocoded, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/bulk_geocoding).
+
+
