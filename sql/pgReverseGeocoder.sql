@@ -45,60 +45,93 @@ CREATE TYPE geores AS (
 );
 
 
---
---   NOTE: The Address Table must have a column named "geog" of type Geography
---
-
-CREATE OR REPLACE FUNCTION reverse_geocoder(numeric, numeric) 
+CREATE OR REPLACE FUNCTION mk_geores(
+    record RECORD,
+    code integer default 1)
   RETURNS geores AS $$
-DECLARE
-  mLon ALIAS FOR $1;
-  mLat ALIAS FOR $2;
-  output geores;
+DECLARE 
+    output geores;
 BEGIN
---
--- Setting Default Search Distance to 50 meters
---
-  output := reverse_geocoder(mLon,mLat,50);  
-  RETURN output;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION reverse_geocoder(numeric, numeric, numeric) 
-  RETURNS geores AS $$
-DECLARE
-  mLon  ALIAS FOR $1;
-  mLat  ALIAS FOR $2;
-  mDist ALIAS FOR $3;
-  
-  mAddress  varchar;
-  record    RECORD;
-  output    geores;
-BEGIN
-
-  SELECT INTO record todofuken, shikuchoson, ooaza, chiban,
-    lon, lat,
-    todofuken||shikuchoson||ooaza||chiban AS address,
-    st_distance(st_setsrid(st_makepoint( mLon,mLat),4326)::geography,geog) AS dist 
-    FROM address  
-    WHERE st_dwithin(st_setsrid(st_makepoint(mLon,mLat),4326)::geography,geog,mDist) 
-    ORDER BY dist LIMIT 1;
-    
-  IF FOUND THEN
      output.x          := record.lon;
      output.y          := record.lat;
-     output.code       := 1;
+     output.code       := code;
      output.address    := record.address;
      output.todofuken  := record.todofuken;
      output.shikuchoson:= record.shikuchoson;
      output.ooaza      := record.ooaza;
      output.chiban     := record.chiban;
-
-    RETURN output;
-  ELSE
-    RETURN NULL;
-  END IF;
-  
+     
+     RETURN output;
 END;
 $$ LANGUAGE plpgsql;
-  
+
+--
+--   NOTE: The Address Table must have a column named "geog" of type Geography
+--
+
+CREATE OR REPLACE FUNCTION reverse_geocoder(
+    mLon numeric,
+    mLat numeric,
+    mDist numeric default 50)
+  RETURNS geores AS $$
+DECLARE
+  point     geometry;
+  o_bdry    RECORD;
+  record    RECORD;
+  output    geores;
+  s_flag    boolean;
+  s_bdry    RECORD;
+BEGIN
+
+  s_flag := FALSE;
+  SELECT INTO point st_setsrid(st_makepoint(mLon,mLat),4326);
+  SELECT INTO o_bdry geom FROM boundary_o WHERE st_intersects(point,geom);
+  IF FOUND THEN
+    SELECT INTO record todofuken, shikuchoson, ooaza, chiban,
+      lon, lat,
+      todofuken||shikuchoson||ooaza||chiban AS address,
+      st_distance(point::geography,geog) AS dist 
+      FROM address 
+      WHERE st_intersects(geog,o_bdry.geom::geography) AND st_dwithin(point::geography,geog,mDist) 
+      ORDER BY dist LIMIT 1;
+      
+    IF FOUND THEN
+      RETURN mk_geores(record, 1);
+    ELSE
+      SELECT INTO record todofuken, shikuchoson, ooaza, NULL as chiban,
+        lon, lat,
+        todofuken||shikuchoson||ooaza AS address,
+        st_distance(point::geography,geog) AS dist 
+        FROM address_o 
+        WHERE st_intersects(geog,o_bdry.geom::geography) 
+        ORDER BY dist LIMIT 1;
+        
+      IF FOUND THEN
+        RETURN mk_geores(record, 2);
+      ELSE
+        s_flag := TRUE;
+      END IF;
+    END IF;
+  ELSE
+    s_flag := TRUE;
+  END IF;
+
+  IF s_flag THEN
+    SELECT INTO s_bdry geom FROM boundary_s WHERE st_intersects(point,geom);
+    IF FOUND THEN
+      SELECT INTO record todofuken, shikuchoson, NULL as ooaza, NULL as chiban,
+          lon, lat,
+          todofuken||shikuchoson AS address, 0 AS dist
+        FROM address_s AS a
+        WHERE st_intersects(a.geog, s_bdry.geom::geography);
+      IF FOUND THEN
+        RETURN mk_geores(record, 3);
+      ELSE
+        RETURN NULL;
+      END IF;
+    ELSE
+      RETURN NULL;
+    END IF;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;

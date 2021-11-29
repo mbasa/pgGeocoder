@@ -43,6 +43,21 @@ create index address4 on address(chiban);
 create index address_o_g_idx on address_o using gist( geog );
 create index address_g_idx on address using gist( geog );
 
+create index boundary_t1 on boundary_t(todofuken);
+create index boundary_t2 on boundary_t(code);
+create index boundary_t_g_idx on boundary_t using gist( geom );
+
+create index boundary_s1 on boundary_s(todofuken);
+create index boundary_s2 on boundary_s(shikuchoson);
+create index boundary_s3 on boundary_s(code);
+create index boundary_s_g_idx on boundary_s using gist( geom );
+
+create index boundary_o1 on boundary_o(todofuken);
+create index boundary_o2 on boundary_o(shikuchoson);
+create index boundary_o3 on boundary_o(ooaza);
+create index boundary_o4 on boundary_o(code);
+create index boundary_o_g_idx on boundary_o using gist( geom );
+
 --
 -- Vacuuming everything
 --

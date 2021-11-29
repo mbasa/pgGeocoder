@@ -17,6 +17,8 @@ fi
 
 if ((!keep)); then
   psql -U ${DBROLE} -d ${DBNAME} -f ./sql/isj/dropISJTables.sql
+  psql -U ${DBROLE} -d ${DBNAME} -f ./sql/estat/dropEStatTables.sql
+  psql -U ${DBROLE} -d ${DBNAME} -f ./sql/ksj/dropKSJTables.sql
 fi
 
 # Adding indexes on the pgGeocoder Tables
