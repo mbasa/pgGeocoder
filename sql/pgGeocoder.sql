@@ -285,7 +285,7 @@ BEGIN
 
   output.x         := -999;
   output.y         := -999;
-  output.address   := 'なし';
+  output.address   := 'なし';  
 
   address := replace(paddress,' ','');
   address := replace(address,'　','');
@@ -297,6 +297,21 @@ BEGIN
   ELSE
     SELECT INTO rec * FROM address_s WHERE 
      address LIKE shikuchoson||'%';
+  END IF;
+
+  --
+  -- Removing District ('郡') since it is not
+  -- normally written in the address
+  --
+  IF NOT FOUND THEN
+    IF r_todofuken <> '' THEN
+      SELECT INTO rec * FROM address_s WHERE 
+      todofuken = r_todofuken AND
+      address LIKE '%'||substr(shikuchoson,strpos(shikuchoson,'郡')+1)||'%';
+    ELSE
+      SELECT INTO rec * FROM address_s WHERE 
+      address LIKE substr(shikuchoson,strpos(shikuchoson,'郡')+1)||'%';
+    END IF;
   END IF;
 
   IF FOUND THEN
@@ -343,6 +358,12 @@ BEGIN
   address := replace(address,'　','');
   
   tmpstr  := split_part(address,r_shikuchoson,2);
+  
+  IF tmpstr = '' THEN
+    tmpstr  := split_part(address,
+      substr(r_shikuchoson,strpos(r_shikuchoson,'郡')+1),2);
+  END IF;
+  
   tmpstr  := tmpstr || '-'; -- to match addresses like 杉並区清水１
   tmpaddr := normalizeAddr( tmpstr );
 
@@ -449,7 +470,14 @@ BEGIN
 --  RAISE NOTICE 'Chiban Parameters passed are : % and %',
 --         address,ooaza;
 
-  tmpstr1 := split_part( address,ooaza,2 );
+  -- tmpstr1 := substring(address from ''||ooaza||'([^'||ooaza||']+)$');
+  tmpstr1 := split_part( address,r_shikuchoson||ooaza,2 );
+  
+  IF tmpstr1 = '' THEN
+    tmpstr1 := split_part( address,
+      substr(r_shikuchoson,strpos(r_shikuchoson,'郡')+1)||ooaza,2 );
+  END IF;
+
   tmpstr1 := replace(tmpstr1,'X','10');
 
   tmpcnt  := 1;
