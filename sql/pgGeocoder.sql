@@ -470,14 +470,14 @@ BEGIN
 --  RAISE NOTICE 'Chiban Parameters passed are : % and %',
 --         address,ooaza;
 
-  -- tmpstr1 := substring(address from ''||ooaza||'([^'||ooaza||']+)$');
-  tmpstr1 := split_part( address,r_shikuchoson||ooaza,2 );
-  
-  IF tmpstr1 = '' THEN
-    tmpstr1 := split_part( address,
-      substr(r_shikuchoson,strpos(r_shikuchoson,'郡')+1)||ooaza,2 );
-  END IF;
+  -- Test if ooaza string is contained in shikuchoson
+  -- i.e. address='和気郡和気町和気681'' ooaza='和気'
 
+  FOR counter IN reverse 5..2 LOOP
+    tmpstr1 := split_part( address,ooaza,counter);
+    EXIT WHEN tmpstr1 <> '';
+  END LOOP;
+  
   tmpstr1 := replace(tmpstr1,'X','10');
 
   tmpcnt  := 1;
