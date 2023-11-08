@@ -49,7 +49,7 @@
    $ bash scripts/maintenance.sh 1
    ```
 
-The above steps take about 45 mins on MacBook Pro (2.6 GHz 16GB RAM) environment.
+The above steps take around 45 mins to complete depending on the specs of the computer.
 
 ## Tables/Functions
 
