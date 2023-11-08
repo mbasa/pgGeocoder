@@ -1,0 +1,8 @@
+.env
+
+data/
+
+.DS_Store
+
+.idea/
+*.code-workspace
