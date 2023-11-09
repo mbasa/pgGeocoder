@@ -35,6 +35,10 @@
    $ bash scripts/install.sh
    $ bash scripts/download_isj.sh 2020
    $ bash scripts/import_isj.sh 2020
+   $ bash scripts/download_estat.sh 2015
+   $ bash scripts/import_estat.sh 2015
+   $ bash scripts/download_ksj.sh 2021
+   $ bash scripts/import_ksj.sh 2021
    ```
 5. Run maintenance script.
    ```bash
@@ -45,7 +49,7 @@
    $ bash scripts/maintenance.sh 1
    ```
 
-The above steps take around 30 mins to complete depending on the specs of the computer.
+The above steps take around 45 mins to complete depending on the specs of the computer.
 
 ## Tables/Functions
 
@@ -82,7 +86,7 @@ $ psql -U postgres addresses
        2 | 139.632805 | 35.458282 | 神奈川県横浜市西区みなとみらい三丁目6番 | 神奈川県   | 横浜市西区    | みなとみらい三丁目 | 6      | 
    (1 row)
    ```
-- Reverse geocode on address:
+* Reverse geocode on address:
    ```sql
    select * from reverse_geocoder(141.342094, 43.050264);
    ```
@@ -92,7 +96,6 @@ $ psql -U postgres addresses
        1 | 141.341681 | 43.050529 | 北海道札幌市中央区南七条西十一丁目3 | 北海道     | 札幌市中央区  | 南七条西十一丁目 | 3      | 
    (1 row)
    ```
-
 * Reverse geocode a coordinate and specify search distance in meters (lon, lat, meters)
    ```sql
    select * from reverse_geocoder(141.342094, 43.050264, 50);
@@ -112,6 +115,31 @@ $ psql -U postgres addresses
    - Geometry Type: Point
    - Remarks:
       - Point based address data for "Gaiku Level" (街区レベル) and "Oaza Level" (大字・町丁目レベル).
+2. e-Stat 国勢調査町丁・字等別境界データ
+   - Website: https://www.e-stat.go.jp/gis/statmap-search?page=1&type=2&aggregateUnitForBoundary=A&toukeiCode=00200521
+   - Format: ESRI Shapefile (or GML)
+   - Geometry Type: Polygon
+   - Remarks:
+      - Almost "Oaza Level" (大字・町丁目レベル) admin boundary data, but some boundaries are merged for Japanese census survey units.
+      - Each prefectures' boundaries are not adjusted (snapped), so some overlaps and gaps exist.
+3. 国土数値情報 (KSJ)
+   - Website: https://nlftp.mlit.go.jp/ksj/index.html
+   - Format: ESRI Shapefile (or GML)
+   - 行政区域データ:
+      - Website: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_0.html
+      - Geometry Type: Polygon
+      - Remarks:
+         - "City Level" (市区町村レベル) admin boundary data.
+   - 市区町村役場データ:
+      - Website: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P34.html
+      - Geometry Type: Point
+      - Remarks:
+         - "City Office" (市区町村役場) point data.
+   - 国・都道府県の機関データ:
+      - Website: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P28.html
+      - Geometry Type: Point
+      - Remarks:
+         - Geovernment data which includes "Prefectural Office" (都道府県庁) point data.
 
 ## Note    
     
