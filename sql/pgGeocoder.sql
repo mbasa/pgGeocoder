@@ -276,6 +276,7 @@ DECLARE
   paddress    ALIAS FOR $1;
   r_todofuken ALIAS FOR $2;
   address     varchar;
+  tmpstr      varchar;
   rec         RECORD;
   output      geores;
 BEGIN
@@ -291,12 +292,15 @@ BEGIN
   address := replace(address,'　','');
 
   IF r_todofuken <> '' THEN
+    tmpstr := split_part(address,r_todofuken,2);
     SELECT INTO rec * FROM address_s WHERE 
      todofuken = r_todofuken AND
-     address LIKE '%'||shikuchoson||'%';
+     tmpstr LIKE shikuchoson||'%'
+     ORDER BY length(shikuchoson) DESC;
   ELSE
     SELECT INTO rec * FROM address_s WHERE 
-     address LIKE shikuchoson||'%';
+     address LIKE shikuchoson||'%'
+     ORDER BY length(shikuchoson) DESC;
   END IF;
 
   --
