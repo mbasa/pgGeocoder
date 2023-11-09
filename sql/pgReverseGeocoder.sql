@@ -85,13 +85,13 @@ BEGIN
 
   s_flag := FALSE;
   SELECT INTO point st_setsrid(st_makepoint(mLon,mLat),4326);
-  SELECT INTO o_bdry geom FROM boundary_o WHERE st_intersects(point,geom);
+  SELECT INTO o_bdry geom FROM pggeocoder.boundary_o WHERE st_intersects(point,geom);
   IF FOUND THEN
     SELECT INTO record todofuken, shikuchoson, ooaza, chiban,
       lon, lat,
       todofuken||shikuchoson||ooaza||chiban AS address,
       st_distance(point::geography,geog) AS dist 
-      FROM address 
+      FROM pggeocoder.address 
       WHERE st_intersects(geog,o_bdry.geom::geography) AND st_dwithin(point::geography,geog,mDist) 
       ORDER BY dist LIMIT 1;
       
@@ -102,7 +102,7 @@ BEGIN
         lon, lat,
         todofuken||shikuchoson||ooaza AS address,
         st_distance(point::geography,geog) AS dist 
-        FROM address_o 
+        FROM pggeocoder.address_o 
         WHERE st_intersects(geog,o_bdry.geom::geography) 
         ORDER BY dist LIMIT 1;
         
@@ -117,12 +117,12 @@ BEGIN
   END IF;
 
   IF s_flag THEN
-    SELECT INTO s_bdry geom FROM boundary_s WHERE st_intersects(point,geom);
+    SELECT INTO s_bdry geom FROM pggeocoder.boundary_s WHERE st_intersects(point,geom);
     IF FOUND THEN
       SELECT INTO record todofuken, shikuchoson, NULL as ooaza, NULL as chiban,
           lon, lat,
           todofuken||shikuchoson AS address, 0 AS dist
-        FROM address_s AS a
+        FROM pggeocoder.address_s AS a
         WHERE st_intersects(a.geog, s_bdry.geom::geography);
       IF FOUND THEN
         RETURN mk_geores(record, 3);

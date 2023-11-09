@@ -65,7 +65,7 @@ psql -U ${DBROLE} -d ${DBNAME} -f ./sql/isj/convertISJDatas.sql
 echo -e "\nPatching address tables..."
 for csv in ${IN_PATCHES_CSV_DIR}/address_*.csv ; do
   table_name=`basename ${csv} .csv`
-  psql -U ${DBROLE} -d ${DBNAME} -c "\copy ${table_name} from '${csv}' with delimiter ',' csv header;"
+  psql -U ${DBROLE} -d ${DBNAME} -c "\copy pggeocoder.${table_name} from '${csv}' with delimiter ',' csv header;"
 done
 
 echo -e "\nDone!"

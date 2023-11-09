@@ -1,9 +1,16 @@
 create extension postgis;
 
+
+--
+-- Creating pggeocoder Schema
+--
+drop schema if exists pggeocoder cascade;
+create schema pggeocoder;
+
 --
 -- for Geocoding
 --
-create table address_t (
+create table pggeocoder.address_t (
   todofuken varchar(60),
   lat float,
   lon float,
@@ -12,7 +19,7 @@ create table address_t (
   geog geography('POINT')
 );
 
-create table address_s (
+create table pggeocoder.address_s (
   todofuken varchar(60),
   shikuchoson varchar(60),
   lat float,
@@ -21,7 +28,7 @@ create table address_s (
   geog geography('POINT')
 );
 
-create table address_o (
+create table pggeocoder.address_o (
   todofuken varchar(60),
   shikuchoson varchar(60),
   ooaza varchar(60),
@@ -32,7 +39,7 @@ create table address_o (
   geog geography('POINT')
 );
 
-create table address (
+create table pggeocoder.address (
   todofuken varchar(60),
   shikuchoson varchar(60),
   ooaza varchar(60),
@@ -45,20 +52,20 @@ create table address (
 --
 -- for Reverse Geocoding
 --
-create table boundary_t (
+create table pggeocoder.boundary_t (
   todofuken varchar(60),
   code varchar(2),
   geom geometry('MULTIPOLYGON', 4326)
 );
 
-create table boundary_s (
+create table pggeocoder.boundary_s (
   todofuken varchar(60),
   shikuchoson varchar(60),
   code varchar(5),
   geom geometry('MULTIPOLYGON', 4326)
 );
 
-create table boundary_o (
+create table pggeocoder.boundary_o (
   todofuken varchar(60),
   shikuchoson varchar(60),
   ooaza varchar(60),
