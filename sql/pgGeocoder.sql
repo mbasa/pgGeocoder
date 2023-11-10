@@ -30,7 +30,7 @@
 -- で請求してください(宛先は the Free Software Foundation, Inc., 59
 -- Temple Place, Suite 330, Boston, MA 02111-1307 USA)。
 
-DROP TYPE geores CASCADE;
+DROP TYPE IF EXISTS geores CASCADE;
 
 CREATE TYPE geores AS (
    code        integer,
@@ -247,7 +247,7 @@ BEGIN
   address := replace(paddress,' ','');
   address := replace(address,'　','');
 
-  SELECT INTO rec * FROM address_t WHERE address
+  SELECT INTO rec * FROM pggeocoder.address_t WHERE address
      LIKE todofuken||'%';
 
   IF FOUND THEN
@@ -293,12 +293,12 @@ BEGIN
 
   IF r_todofuken <> '' THEN
     tmpstr := split_part(address,r_todofuken,2);
-    SELECT INTO rec * FROM address_s WHERE 
+    SELECT INTO rec * FROM pggeocoder.address_s WHERE 
      todofuken = r_todofuken AND
      tmpstr LIKE shikuchoson||'%'
      ORDER BY length(shikuchoson) DESC;
   ELSE
-    SELECT INTO rec * FROM address_s WHERE 
+    SELECT INTO rec * FROM pggeocoder.address_s WHERE 
      address LIKE shikuchoson||'%'
      ORDER BY length(shikuchoson) DESC;
   END IF;
@@ -309,11 +309,11 @@ BEGIN
   --
   IF NOT FOUND THEN
     IF r_todofuken <> '' THEN
-      SELECT INTO rec * FROM address_s WHERE 
+      SELECT INTO rec * FROM pggeocoder.address_s WHERE 
       todofuken = r_todofuken AND
       address LIKE '%'||substr(shikuchoson,strpos(shikuchoson,'郡')+1)||'%';
     ELSE
-      SELECT INTO rec * FROM address_s WHERE 
+      SELECT INTO rec * FROM pggeocoder.address_s WHERE 
       address LIKE substr(shikuchoson,strpos(shikuchoson,'郡')+1)||'%';
     END IF;
   END IF;
@@ -380,7 +380,7 @@ BEGIN
     --
     address := replace(address,'市字','市');
     
-    SELECT INTO rec *,length(tr_ooaza) AS length FROM address_o WHERE 
+    SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
     todofuken = r_todofuken AND
     shikuchoson = r_shikuchoson AND
     strpos(tmpaddr,tr_ooaza) > 1 ORDER BY length DESC LIMIT 1; 
@@ -403,7 +403,7 @@ BEGIN
   -- but produces more accurate matches.
   --
 
-  SELECT INTO rec *,length(tr_ooaza) AS length FROM address_o WHERE 
+  SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
    todofuken = r_todofuken AND
    shikuchoson = r_shikuchoson AND
    strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
@@ -455,7 +455,7 @@ BEGIN
   preftab := '';
 
   IF r_todofuken <> '' THEN
-    SELECT INTO rec * FROM address_t where todofuken = r_todofuken;
+    SELECT INTO rec * FROM pggeocoder.address_t where todofuken = r_todofuken;
     preftab := rec.ttable;
   END IF;
 
