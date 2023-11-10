@@ -3,6 +3,6 @@
 data/
 
 .DS_Store
-
+.project
 .idea/
 *.code-workspace
