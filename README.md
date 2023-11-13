@@ -23,6 +23,9 @@
    DBNAME=addresses
    DBHOST=localhost
    DBPORT=5432
+   YEAR_ISJ=2020
+   YEAR_KSJ=2021
+   YEAR_ESTAT=2015
    ```
 3. Create address database (with same as `.env` values).  
    (If the database exists, drop it at first.)
@@ -33,12 +36,7 @@
 4. Run install and download/import scripts.
    ```bash
    $ bash scripts/install.sh
-   $ bash scripts/download_isj.sh 2020
-   $ bash scripts/import_isj.sh 2020
-   $ bash scripts/download_estat.sh 2015
-   $ bash scripts/import_estat.sh 2015
-   $ bash scripts/download_ksj.sh 2021
-   $ bash scripts/import_ksj.sh 2021
+   $ bash scripts/import_data.sh
    ```
 5. Run maintenance script.
    ```bash
@@ -49,7 +47,7 @@
    $ bash scripts/maintenance.sh 1
    ```
 
-The above steps take around 45 mins to complete depending on the specs of the computer.
+   Note: The maintainance script will take around 45 mins to complete depending on the specs of the computer.
 
 ## Tables/Functions
 
@@ -141,7 +139,7 @@ $ psql -U postgres addresses
       - Remarks:
          - Geovernment data which includes "Prefectural Office" (都道府県庁) point data.
 
-## Note    
+## Notes    
     
 * For bulk geocoding, wherein addresses located in a field of a table are geocoded, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/bulk_geocoding).
 
