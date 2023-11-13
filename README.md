@@ -4,6 +4,7 @@
 
 * PostgreSQL >= 11
 * PostGIS >= 2.5
+#### For Address Data Import and Creation
 * GDAL >= 2.1
 * curl
 * unzip
@@ -144,3 +145,5 @@ $ psql -U postgres addresses
 * For `Bulk Geocoding`, wherein addresses located in a field of a table are geocoded, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/bulk_geocoding).
 
 * To create `TRIGGERS` that will geocode addresses automatically on an `INSERT` or `UPDATE` operation, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/Creating-Triggers-for-the-Geocoder).
+
+* To view the FOSS4G Presentation for pgGeocoder, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/pgGeocoder-FOSS4G-Presentation)
