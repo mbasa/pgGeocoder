@@ -16,7 +16,7 @@
    $ cd /path/to/pgGeocoder
    $ cp .env.example .env
    ```
-2. Open `.env` file with some text editor and adjust database settings.
+2. Open `.env` file with some text editor and adjust database settings and the years of the dataset to import.
    ```
    DBROLE=postgres
    DBPASS=postgres
@@ -141,6 +141,6 @@ $ psql -U postgres addresses
 
 ## Notes    
     
-* For bulk geocoding, wherein addresses located in a field of a table are geocoded, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/bulk_geocoding).
+* For `Bulk Geocoding`, wherein addresses located in a field of a table are geocoded, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/bulk_geocoding).
 
 * To create `TRIGGERS` that will geocode addresses automatically on an `INSERT` or `UPDATE` operation, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/Creating-Triggers-for-the-Geocoder).
