@@ -29,7 +29,7 @@ create table isj.pref as
 --
 -- Inserting the Gaiku data into address table
 --
-insert into pggeocoder.address (todofuken, shikuchoson, ooaza, chiban, lat, lon, geog)
+insert into pggeocoder.address_c (todofuken, shikuchoson, ooaza, chiban, lat, lon, geog)
   select pref_name, city_name, oaza_name || coalesce(koaza_name, ''),
     gaiku_code, lat, lon, geom::geography from isj.gaiku;
 

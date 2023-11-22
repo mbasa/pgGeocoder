@@ -33,3 +33,5 @@ echo "YEAR ESTAT:${T_YEAR_ESTAT}"
 /bin/bash scripts/import_estat.sh ${T_YEAR_ESTAT}
 /bin/bash scripts/download_ksj.sh ${T_YEAR_KSJ}
 /bin/bash scripts/import_ksj.sh ${T_YEAR_KSJ}
+/bin/bash scripts/download_abr.sh
+/bin/bash scripts/import_abr.sh

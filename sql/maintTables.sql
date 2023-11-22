@@ -6,7 +6,7 @@
 --
 -- updating the ttable field to point to address table
 --
-update pggeocoder.address_t set ttable = 'pggeocoder.address';
+update pggeocoder.address_t set ttable = 'pggeocoder.address_c';
 
 --
 -- creating index for address_t
@@ -32,16 +32,24 @@ create index address_o4 on pggeocoder.address_o(code);
 --
 -- creating index for address
 --
-create index address1 on pggeocoder.address(todofuken);
-create index address2 on pggeocoder.address(shikuchoson);
-create index address3 on pggeocoder.address(ooaza);
-create index address4 on pggeocoder.address(chiban);
+create index address_c1 on pggeocoder.address_c(todofuken);
+create index address_c2 on pggeocoder.address_c(shikuchoson);
+create index address_c3 on pggeocoder.address_c(ooaza);
+create index address_c4 on pggeocoder.address_c(chiban);
+
+--
+-- creating index for address_g
+--
+create index address_g1 on pggeocoder.address_g(shikuchoson);
+create index address_g2 on pggeocoder.address_g(ooaza);
+create index address_g3 on pggeocoder.address_g(chiban);
+create index address_g4 on pggeocoder.address_g(go);
 
 --
 -- for Reverse Geocoding
 --
 create index address_o_g_idx on pggeocoder.address_o using gist( geog );
-create index address_g_idx on pggeocoder.address using gist( geog );
+create index address_g_idx on pggeocoder.address_c using gist( geog );
 
 create index boundary_t1 on pggeocoder.boundary_t(todofuken);
 create index boundary_t2 on pggeocoder.boundary_t(code);

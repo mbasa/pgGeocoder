@@ -102,9 +102,18 @@ BEGIN
   IF gc.address <> 'なし' THEN
     output := gc;
     output.code := matching_chiban;
+    gc := searchPinpoint( address,output.todofuken,output.shikuchoson,
+                                  output.ooaza,output.chiban );
+  ELSE
+    RETURN output;
   END IF;
 
-  RETURN output;
+IF gc.address <> 'なし' THEN
+    output := gc;
+    output.code := matching_pinpnt;
+END IF;
+
+RETURN output;
 
 END;
 $$ LANGUAGE plpgsql;
@@ -513,11 +522,84 @@ BEGIN
     output.x          := rec.lon;
     output.y          := rec.lat;
     output.address    := rec.todofuken||rec.shikuchoson||
-                         rec.ooaza||rec.chiban||'番';
+                         rec.ooaza||rec.chiban;
     output.todofuken  := rec.todofuken;
     output.shikuchoson:= rec.shikuchoson;
     output.ooaza      := rec.ooaza;
     output.chiban     := rec.chiban;
+  END IF;
+  
+  RETURN output;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+--
+--  Function to search Pinpoint level of an address
+--  parameters: address, todofuken, shikuchoson, ooza, chiban
+--
+
+CREATE OR REPLACE FUNCTION searchPinpoint( character varying,character varying, 
+                            character varying,character varying,character varying ) 
+  RETURNS geores AS $$
+DECLARE
+  paddress      ALIAS FOR $1;
+  r_todofuken   ALIAS FOR $2;
+  r_shikuchoson ALIAS FOR $3;
+  r_ooaza       ALIAS FOR $4;
+  r_chiban      ALIAS FOR $5;
+  address       varchar;
+  tmpstr1       varchar;
+  tmpstr2       varchar;
+  tmpstr3       varchar;
+  rec           RECORD;
+  output        geores;
+BEGIN
+
+  output.x         := -999;
+  output.y         := -999;
+  output.address   := 'なし';
+
+
+  address := replace(paddress,' ','');
+  address := replace(address,'　','');
+  address := normalizeAddr( address );
+
+  tmpstr2 := substring( address from '\d*\-\d*\-\d*');
+  
+  IF tmpstr2 <> '' THEN
+    tmpstr3 := split_part(tmpstr2,'-',3);
+  ELSE
+    RETURN output;
+  --  tmpstr2 := substring( address from '\d*\-\d*');
+  --  tmpstr3 := split_part(tmpstr2,'-',2);
+  --  tmpstr1 := split_part(tmpstr2,'-',1);
+  --
+  --  IF tmpstr3 = '' OR tmpstr1 = tmpstr3 THEN
+  --    RETURN output;
+  --  END IF;
+  END IF;
+
+  tmpstr1 := 'SELECT * FROM pggeocoder.address_g WHERE '  ||
+   'shikuchoson = ' || quote_literal(r_shikuchoson) || ' AND ' ||
+   'ooaza       = ' || quote_literal(r_ooaza)       || ' AND ' ||
+   'chiban      = ' || quote_literal(r_chiban) || ' AND ' ||
+   'go          = ' || quote_literal(tmpstr3);
+
+  EXECUTE tmpstr1 into rec;
+      
+  IF rec.lon IS NOT NULL AND rec.lat IS NOT NULL THEN
+    output.code       := 1;
+    output.x          := rec.lon;
+    output.y          := rec.lat;
+    output.address    := r_todofuken||rec.shikuchoson||
+                         rec.ooaza||rec.chiban||'-'||tmpstr3;
+    output.todofuken  := r_todofuken;
+    output.shikuchoson:= rec.shikuchoson;
+    output.ooaza      := rec.ooaza;
+    output.chiban     := rec.chiban;
+    output.go         := tmpstr3;
   END IF;
   
   RETURN output;

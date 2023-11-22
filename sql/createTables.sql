@@ -39,11 +39,21 @@ create table pggeocoder.address_o (
   geog geography('POINT')
 );
 
-create table pggeocoder.address (
+create table pggeocoder.address_c (
   todofuken varchar(60),
   shikuchoson varchar(60),
   ooaza varchar(60),
   chiban varchar(60),
+  lat float,
+  lon float,
+  geog geography('POINT')
+);
+
+create table pggeocoder.address_g (
+  shikuchoson varchar(60),
+  ooaza varchar(60),
+  chiban varchar(60),
+  go varchar(60),
   lat float,
   lon float,
   geog geography('POINT')
