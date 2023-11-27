@@ -24,10 +24,6 @@ CREATE TABLE if not exists abr.rsdtdsp_dsp (
   "ablt_date" TEXT,
   "src_code" TEXT,
   "remarks" TEXT
-
-  -- mt_rsdtdsp_rsdt_pos_prefXX から結合
-  --"rep_pnt_lon" REAL,
-  --"rep_pnt_lat" REAL
 );
 
 CREATE TABLE if not exists abr.rsdtdsp_pos (
@@ -47,6 +43,15 @@ CREATE TABLE if not exists abr.rsdtdsp_pos (
   "effective_date" TEXT
 );
 
+CREATE TABLE IF NOT EXISTS abr.pref (
+  "lg_code" TEXT,
+  "pref_name" TEXT,
+  "pref_name_kana" TEXT,
+  "pref_name_roma" TEXT,
+  "efct_date" TEXT,
+  "ablt_date" TEXT,
+  "remarks" TEXT
+);
 
 
 

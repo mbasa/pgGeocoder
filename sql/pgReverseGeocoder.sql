@@ -91,7 +91,7 @@ BEGIN
       lon, lat,
       todofuken||shikuchoson||ooaza||chiban AS address,
       st_distance(point::geography,geog) AS dist 
-      FROM pggeocoder.address 
+      FROM pggeocoder.address_c 
       WHERE st_intersects(geog,o_bdry.geom::geography) AND st_dwithin(point::geography,geog,mDist) 
       ORDER BY dist LIMIT 1;
       

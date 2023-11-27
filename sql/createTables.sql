@@ -50,6 +50,7 @@ create table pggeocoder.address_c (
 );
 
 create table pggeocoder.address_g (
+  todofuken varchar(60),
   shikuchoson varchar(60),
   ooaza varchar(60),
   chiban varchar(60),

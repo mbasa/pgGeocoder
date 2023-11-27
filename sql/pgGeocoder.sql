@@ -593,9 +593,9 @@ BEGIN
     output.code       := 1;
     output.x          := rec.lon;
     output.y          := rec.lat;
-    output.address    := r_todofuken||rec.shikuchoson||
+    output.address    := rec.todofuken||rec.shikuchoson||
                          rec.ooaza||rec.chiban||'-'||tmpstr3;
-    output.todofuken  := r_todofuken;
+    output.todofuken  := rec.todofuken;
     output.shikuchoson:= rec.shikuchoson;
     output.ooaza      := rec.ooaza;
     output.chiban     := rec.chiban;
