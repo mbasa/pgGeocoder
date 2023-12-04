@@ -447,6 +447,7 @@ DECLARE
   r_ooaza       ALIAS FOR $4;
   address       varchar;
   ooaza         varchar;
+  shikuchoson   varchar;
   preftab       varchar;
   tmpstr1       varchar;
   tmpstr2       varchar;
@@ -480,17 +481,22 @@ BEGIN
   ooaza := replace(ooaza,'　','');
   ooaza := normalizeAddr( ooaza );
 
+  shikuchoson := replace(r_shikuchoson,' ','');
+  shikuchoson := replace(shikuchoson,'　','');
+  shikuchoson := normalizeAddr( shikuchoson );
+
 --  RAISE NOTICE 'Chiban Parameters passed are : % and %',
 --         address,ooaza;
 
   -- Test if ooaza string is contained in shikuchoson
   -- i.e. address='和気郡和気町和気681'' ooaza='和気'
 
-  FOR counter IN reverse 5..2 LOOP
-    tmpstr1 := split_part( address,ooaza,counter);
-    EXIT WHEN tmpstr1 <> '';
-  END LOOP;
+  -- FOR counter IN reverse 5..2 LOOP
+  --   tmpstr1 := split_part( address,ooaza,counter);
+  --   EXIT WHEN tmpstr1 <> '';
+  -- END LOOP;
   
+  tmpstr1 := split_part(address,shikuchoson||ooaza,2);
   tmpstr1 := replace(tmpstr1,'X','10');
 
   tmpcnt  := 1;
