@@ -571,14 +571,14 @@ BEGIN
   IF tmpstr2 <> '' THEN
     tmpstr3 := split_part(tmpstr2,'-',3);
   ELSE
-    RETURN output;
-  --  tmpstr2 := substring( address from '\d*\-\d*');
-  --  tmpstr3 := split_part(tmpstr2,'-',2);
-  --  tmpstr1 := split_part(tmpstr2,'-',1);
-  --
-  --  IF tmpstr3 = '' OR tmpstr1 = tmpstr3 THEN
-  --    RETURN output;
-  --  END IF;
+  --  RETURN output;
+    tmpstr2 := substring( address from '\d*\-\d*');
+    tmpstr3 := split_part(tmpstr2,'-',2);
+    tmpstr1 := substring(normalizeAddr(r_ooaza) from '\d*\-');
+  
+    IF tmpstr3 = '' OR tmpstr1 IS NOT NULL THEN
+      RETURN output;
+    END IF;
   END IF;
 
   tmpstr1 := 'SELECT * FROM pggeocoder.address_g WHERE '  ||

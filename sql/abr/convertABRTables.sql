@@ -19,7 +19,7 @@ insert into pggeocoder.address_g (todofuken,shikuchoson,ooaza,chiban,go,lon,lat)
 select 
   pref_name as todofuken,
   city_name||COALESCE(od_city_name,'') as shikuchoson,
-  oaza_town_name || COALESCE(koaza_name,chome_name) as ooza,
+  COALESCE(oaza_town_name,'') || COALESCE(koaza_name,COALESCE(chome_name,'')) as ooza,
   blk_num as chiban,
   rsdt_num as go,
   b.rep_pnt_lon as lon,
