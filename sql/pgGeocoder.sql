@@ -568,7 +568,7 @@ BEGIN
 
   tmpstr2 := substring( address from '\d*\-\d*\-\d*');
   
-  IF tmpstr2 <> '' THEN
+  IF tmpstr2 IS NOT NULL THEN
     tmpstr3 := split_part(tmpstr2,'-',3);
   ELSE
   --  RETURN output;
@@ -576,7 +576,7 @@ BEGIN
     tmpstr3 := split_part(tmpstr2,'-',2);
     tmpstr1 := substring(normalizeAddr(r_ooaza) from '\d*\-');
   
-    IF tmpstr3 = '' OR tmpstr1 IS NOT NULL THEN
+    IF tmpstr3 IS NULL OR tmpstr1 IS NOT NULL THEN
       RETURN output;
     END IF;
   END IF;
