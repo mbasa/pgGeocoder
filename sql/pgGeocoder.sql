@@ -572,7 +572,13 @@ BEGIN
   output.address   := 'なし';
 
 
-  address := replace(paddress,' ','');
+  --
+  -- Replacing floor num in address ie 清水1-3-14 3F
+  --
+  address := regexp_replace(paddress,' \d*F',' xF');
+  address := regexp_replace(address,'　\d*F',' xF');
+
+  address := replace(address,' ','');
   address := replace(address,'　','');
   address := normalizeAddr( address );
 
