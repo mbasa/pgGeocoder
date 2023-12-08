@@ -575,8 +575,12 @@ BEGIN
   --
   -- Replacing floor num in address ie 清水1-3-14 3F
   --
-  address := regexp_replace(paddress,' \d*F',' xF');
-  address := regexp_replace(address,'　\d*F',' xF');
+  address := regexp_replace(paddress,' \d*F' ,' nF');
+  address := regexp_replace(address,'　\d*F' ,' nF');
+  address := regexp_replace(address,' \W*Ｆ' ,' nF');
+  address := regexp_replace(address,'　\W*Ｆ',' nF');
+  address := regexp_replace(address,' \W*階' ,' nF');
+  address := regexp_replace(address,'　\W*階',' nF');
 
   address := replace(address,' ','');
   address := replace(address,'　','');
