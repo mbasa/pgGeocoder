@@ -136,8 +136,8 @@ DECLARE
 BEGIN
   
   address := translate(paddress,
-      'ヶケ−－ーの１２３４５６７８９０一二三四五六七八九十丁目',
-      'kk----1234567890123456789X-');
+      'ヶケ?ｰ―‐−－ーのノ１２３４５６７８９０〇一二三四五六七八九十丁目',
+      'がが---------12345678900123456789X-');
 
   IF strpos( address, 'X') <> 0 THEN
     tmparr   := string_to_array( address,'X');
@@ -203,9 +203,26 @@ BEGIN
   --
   address := translate( address,
     '之ノ治ヰヱ淵渕輿曽藪薮籠篭劔峯峰岡丘富冨祓桧檜莱洲冶治壇檀舘館斉斎竈竃朗鷆膳録嶋崎埼碕庄荘横橫鄕神塚塚都都德福朗郞嶽區溪縣廣斎眞槇槙莊藏龍瀧澤當邊舖萬豫禮茅礪砺',
-    'のの冶いえ渕淵興曾薮藪篭籠剱峰峯丘岡冨富秡檜桧来州治冶檀壇館舘斎斉釜釜郎鷏善禄島埼崎崎荘庄橫横郷神塚塚都都徳福朗郎岳区渓県広斉真槙槇荘蔵竜滝沢当辺舗万予礼芽砺礪'
+    '-の冶いえ渕淵興曾薮藪篭籠剱峰峯丘岡冨富秡檜桧来州治冶檀壇館舘斎斉釜釜郎鷏善禄島埼崎崎荘庄橫横郷神塚塚都都徳福朗郎岳区渓県広斉真槙槇荘蔵竜滝沢当辺舗万予礼芽砺礪'
   );
-  
+
+ --
+ -- For addresses like 清水一丁目−３番−１４号
+ --  
+  address := replace(address,'--','-');
+
+  --
+  -- Replacing floor num in address ie 清水1-3-14 3F
+  --
+  address := regexp_replace(address,' \d*F' ,' nF');
+  address := regexp_replace(address,'　\d*F' ,' nF');
+  address := regexp_replace(address,' \W*Ｆ' ,' nF');
+  address := regexp_replace(address,'　\W*Ｆ',' nF');
+  address := regexp_replace(address,' \W*階' ,' nF');
+  address := regexp_replace(address,'　\W*階',' nF');
+  address := regexp_replace(address,' \d*階' ,' nF');
+  address := regexp_replace(address,'　\d*階',' nF');
+
   --
   -- For addresses like 北海道札幌市白石区本通１北３
   --
@@ -473,9 +490,9 @@ BEGIN
     RETURN  output;
   END IF;
 
-  address := replace(paddress,' ','');
-  address := replace(address,'　','');
-  address := normalizeAddr( address );
+  address := normalizeAddr( paddress );
+  address := replace(address,' ','');
+  address := replace(address,'　','');  
 
   ooaza := replace(r_ooaza,' ','');
   ooaza := replace(ooaza,'　','');
@@ -560,6 +577,7 @@ DECLARE
   r_ooaza       ALIAS FOR $4;
   r_chiban      ALIAS FOR $5;
   address       varchar;
+  ooaza         varchar;
   tmpstr1       varchar;
   tmpstr2       varchar;
   tmpstr3       varchar;
@@ -571,34 +589,22 @@ BEGIN
   output.y         := -999;
   output.address   := 'なし';
 
-
-  --
-  -- Replacing floor num in address ie 清水1-3-14 3F
-  --
-  address := regexp_replace(paddress,' \d*F' ,' nF');
-  address := regexp_replace(address,'　\d*F' ,' nF');
-  address := regexp_replace(address,' \W*Ｆ' ,' nF');
-  address := regexp_replace(address,'　\W*Ｆ',' nF');
-  address := regexp_replace(address,' \W*階' ,' nF');
-  address := regexp_replace(address,'　\W*階',' nF');
+  address := replace(paddress,'番地','-');
+  address := replace(address,'番','-');
+  address := normalizeAddr( address );
 
   address := replace(address,' ','');
   address := replace(address,'　','');
-  address := normalizeAddr( address );
 
-  tmpstr2 := substring( address from '\d*\-\d*\-\d*');
-  
+  ooaza := replace(r_ooaza,'番','-');
+  ooaza := normalizeAddr(ooaza);
+
+  tmpstr2 := substring( split_part(address,ooaza,2) from '\d*\-\d*');
+
   IF tmpstr2 IS NOT NULL THEN
-    tmpstr3 := split_part(tmpstr2,'-',3);
-  ELSE
-  --  RETURN output;
-    tmpstr2 := substring( address from '\d*\-\d*');
     tmpstr3 := split_part(tmpstr2,'-',2);
-    tmpstr1 := substring(normalizeAddr(r_ooaza) from '\d*\-');
-  
-    IF tmpstr3 IS NULL OR tmpstr1 IS NOT NULL THEN
-      RETURN output;
-    END IF;
+  ELSE
+    RETURN output;
   END IF;
 
   tmpstr1 := 'SELECT * FROM pggeocoder.address_g WHERE '  ||
@@ -607,6 +613,8 @@ BEGIN
    'chiban      = ' || quote_literal(r_chiban) || ' AND ' ||
    'go          = ' || quote_literal(tmpstr3);
 
+  --RAISE NOTICE 'tmpstr1 %',tmpstr1;
+  
   EXECUTE tmpstr1 into rec;
       
   IF rec.lon IS NOT NULL AND rec.lat IS NOT NULL THEN
