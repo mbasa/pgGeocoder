@@ -1,7 +1,7 @@
 .env
 
 data/
-
+work/
 .DS_Store
 .project
 .idea/

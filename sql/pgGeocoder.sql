@@ -202,8 +202,8 @@ BEGIN
   -- Adding Kobayashi-san's rule set
   --
   address := translate( address,
-    '之ノ治ヰヱ淵渕輿曽藪薮籠篭劔峯峰岡丘富冨祓桧檜莱洲冶治壇檀舘館斉斎竈竃朗鷆膳録嶋崎埼碕庄荘横橫鄕神塚塚都都德福朗郞嶽區溪縣廣斎眞槇槙莊藏龍瀧澤當邊舖萬豫禮茅礪砺',
-    '-の冶いえ渕淵興曾薮藪篭籠剱峰峯丘岡冨富秡檜桧来州治冶檀壇館舘斎斉釜釜郎鷏善禄島埼崎崎荘庄橫横郷神塚塚都都徳福朗郎岳区渓県広斉真槙槇荘蔵竜滝沢当辺舗万予礼芽砺礪'
+    '榮之ノ治ヰヱ淵渕輿曽藪薮籠篭劔峯峰岡丘富冨祓桧檜莱洲冶治壇檀舘館斉斎竈竃朗鷆膳録嶋崎埼碕庄荘横橫鄕神塚塚都都德福朗郞嶽區溪縣廣斎眞槇槙莊藏龍瀧澤當邊舖萬豫禮茅礪砺',
+    '栄-の冶いえ渕淵興曾薮藪篭籠剱峰峯丘岡冨富秡檜桧来州治冶檀壇館舘斎斉釜釜郎鷏善禄島埼崎崎荘庄橫横郷神塚塚都都徳福朗郎岳区渓県広斉真槙槇荘蔵竜滝沢当辺舗万予礼芽砺礪'
   );
 
  --
@@ -423,7 +423,51 @@ BEGIN
         RETURN output;
     END IF;  
   END IF;
+
+  --
+  -- Trying to parse Okinawa Addresses which omits '字'
+  --
+  IF r_todofuken = '沖縄県' THEN
+    
+    SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
+    todofuken = r_todofuken AND
+    shikuchoson = r_shikuchoson AND
+    strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
+
+    IF FOUND THEN
+        output.x          := rec.lon;
+        output.y          := rec.lat;
+        output.code       := 2;
+        output.address    := rec.todofuken||rec.shikuchoson||rec.ooaza;
+        output.todofuken  := rec.todofuken;
+        output.shikuchoson:= rec.shikuchoson;
+        output.ooaza      := rec.ooaza;
+        
+        RETURN output;
+    END IF;
+
+    --
+    -- Adding '字' if there was no match. 
+    --
+    SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
+    todofuken = r_todofuken AND
+    shikuchoson = r_shikuchoson AND
+    strpos('字'||tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
+
+    IF FOUND THEN
+        output.x          := rec.lon;
+        output.y          := rec.lat;
+        output.code       := 2;
+        output.address    := rec.todofuken||rec.shikuchoson||rec.ooaza;
+        output.todofuken  := rec.todofuken;
+        output.shikuchoson:= rec.shikuchoson;
+        output.ooaza      := rec.ooaza;            
+    END IF; 
+    
+    RETURN output;
+  END IF;
   
+
   --
   -- the 'Order By length' slows down the operation a bit
   -- but produces more accurate matches.
