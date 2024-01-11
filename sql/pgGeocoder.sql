@@ -557,11 +557,8 @@ BEGIN
   --   EXIT WHEN tmpstr1 <> '';
   -- END LOOP;
   
-  IF r_todofuken = '京都府' THEN
-    tmpstr1 := split_part(address,ooaza,2);
-  ELSE
-    tmpstr1 := split_part(address,shikuchoson||ooaza,2);
-  END IF;
+  
+  tmpstr1 := split_part(address,ooaza,2);
   tmpstr1 := replace(tmpstr1,'X','10');
 
   tmpcnt  := 1;
