@@ -7,7 +7,7 @@ A 120,000+ sample Address Data is provided to test the Matching Rate of this geo
 To install, run the included file `pgg_benchmark.sql` using `pgsql` on a database with pg_geocoder fully installed. 
 
 ```shell
-pgsql -f pgg_benchmark.sql addresses2020
+psql -f pgg_benchmark.sql addresses2020
 ```
 
 This will create a `pgg_benchmark` table and populate it with the addresses, then add a `gc` column of type `geores` to contain the geocoder reult information. Finally, the entire addresses will be geocoded. 
@@ -20,7 +20,7 @@ select (gc).code,address,(gc).x,(gc).y from pgg_benchmark where (gc).code <= 2 a
 
 ### Benchmarkong Geocoding Rate
 
-To get the time it takes to geocode the entire table, set the `\timing` pgsql timing feature to on amd then geocode the table using SQL's `update` command.
+To get the time it takes to geocode the entire table, set the `\timing` psql timing feature to on amd then geocode the table using SQL's `update` command.
 
 ```sql 
 \timing on
