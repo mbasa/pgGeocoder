@@ -14,7 +14,7 @@ This will create a `pgg_benchmark` table and populate it with the addresses, the
 
 From here, it is possible to see the results of the pg_geocoder geocding process on the addresses. Below is an example query to list all the `Pinpoint` and `Banchi` level matches with the corresponding Lng/Lat coordinates on Tokyo addresses:
 
-```sqk 
+```sql 
 select (gc).code,address,(gc).x,(gc).y from pgg_benchmark where (gc).code <= 2 and (gc).todofuken = '東京都';
 ```
 
