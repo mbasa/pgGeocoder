@@ -15,7 +15,7 @@ vacuum ANALYZE abr.rsdtdsp_dsp ;
 
 delete from pggeocoder.address_g;
 
-insert into pggeocoder.address_g (todofuken,shikuchoson,ooaza,chiban,go,lon,lat)
+insert into pggeocoder.address_g (todofuken,shikuchoson,ooaza,chiban,go,lon,lat,geog)
 select 
   pref_name as todofuken,
   city_name||COALESCE(od_city_name,'') as shikuchoson,
@@ -23,9 +23,10 @@ select
   blk_num as chiban,
   rsdt_num as go,
   b.rep_pnt_lon as lon,
-  b.rep_pnt_lat as lat 
-  from abr.rsdtdsp_dsp a,abr.rsdtdsp_pos b, abr.pref c 
-  where a.lg_code = b.lg_code and 
+  b.rep_pnt_lat as lat,
+  st_point(b.rep_pnt_lon,b.rep_pnt_lat,4326) as geog
+from abr.rsdtdsp_dsp a,abr.rsdtdsp_pos b, abr.pref c 
+where a.lg_code = b.lg_code and 
     a.town_id = b.town_id and 
     a.blk_id = b.blk_id and 
     a.addr_id = b.addr_id and

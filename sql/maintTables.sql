@@ -44,6 +44,7 @@ create index address_g1 on pggeocoder.address_g(shikuchoson);
 create index address_g2 on pggeocoder.address_g(ooaza);
 create index address_g3 on pggeocoder.address_g(chiban);
 create index address_g4 on pggeocoder.address_g(go);
+create index address_g5 on pggeocoder.address_g using gist( geog );
 
 --
 -- for Reverse Geocoding
