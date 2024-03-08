@@ -84,7 +84,38 @@ DECLARE
 BEGIN
 
   s_flag := FALSE;
+
+  output.code      := -9;
+  output.x         := -999;
+  output.y         := -999;
+  output.address   := 'なし';
+
   SELECT INTO point st_setsrid(st_makepoint(mLon,mLat),4326);
+  
+  --
+  -- Searching ABR data for Pinpoint search. Logic might
+  -- change, depending on the ABR dataset.
+  --
+  SELECT INTO record todofuken, shikuchoson, ooaza, chiban, go,
+      lon, lat,
+      todofuken||shikuchoson||ooaza||chiban||'-'||go AS address
+      FROM pggeocoder.address_g  
+      WHERE st_dwithin(point, geog,mDist)
+      ORDER BY st_distance(point,geog) LIMIT 1;
+
+  IF FOUND THEN
+      output.code       := 1;
+      output.x          := record.lon;
+      output.y          := record.lat;
+      output.address    := record.address;
+      output.todofuken  := record.todofuken;
+      output.shikuchoson:= record.shikuchoson;
+      output.ooaza      := record.ooaza;
+      output.chiban     := record.chiban;
+      output.go         := record.go;
+      RETURN output;     
+  END IF;
+
   SELECT INTO o_bdry geom FROM pggeocoder.boundary_o WHERE st_intersects(point,geom);
   IF FOUND THEN
     SELECT INTO record todofuken, shikuchoson, ooaza, chiban,
@@ -96,7 +127,16 @@ BEGIN
       ORDER BY dist LIMIT 1;
       
     IF FOUND THEN
-      RETURN mk_geores(record, 1);
+      output.code       := 2;
+      output.x          := record.lon;
+      output.y          := record.lat;
+      output.address    := record.address;
+      output.todofuken  := record.todofuken;
+      output.shikuchoson:= record.shikuchoson;
+      output.ooaza      := record.ooaza;
+      output.chiban     := record.chiban;
+
+      RETURN output;
     ELSE
       SELECT INTO record todofuken, shikuchoson, ooaza, NULL as chiban,
         lon, lat,
@@ -106,8 +146,16 @@ BEGIN
         WHERE st_intersects(geog,o_bdry.geom::geography) 
         ORDER BY dist LIMIT 1;
         
-      IF FOUND THEN
-        RETURN mk_geores(record, 2);
+      IF FOUND THEN 
+        output.code       := 3;
+        output.x          := record.lon;
+        output.y          := record.lat;
+        output.address    := record.address;
+        output.todofuken  := record.todofuken;
+        output.shikuchoson:= record.shikuchoson;
+        output.ooaza      := record.ooaza;
+        output.chiban     := record.chiban;
+        RETURN output;
       ELSE
         s_flag := TRUE;
       END IF;
@@ -125,13 +173,20 @@ BEGIN
         FROM pggeocoder.address_s AS a
         WHERE st_intersects(a.geog, s_bdry.geom::geography);
       IF FOUND THEN
-        RETURN mk_geores(record, 3);
-      ELSE
-        RETURN NULL;
+        output.code       := 4;
+        output.x          := record.lon;
+        output.y          := record.lat;
+        output.address    := record.address;
+        output.todofuken  := record.todofuken;
+        output.shikuchoson:= record.shikuchoson;
+        output.ooaza      := record.ooaza;
+        output.chiban     := record.chiban;
+        RETURN output;
       END IF;
-    ELSE
-      RETURN NULL;
     END IF;
   END IF;
+  
+  RETURN output;
+
 END;
 $$ LANGUAGE plpgsql;
