@@ -44,29 +44,9 @@ CREATE TYPE geores AS (
    go          character varying
 );
 
-
-CREATE OR REPLACE FUNCTION mk_geores(
-    record RECORD,
-    code integer default 1)
-  RETURNS geores AS $$
-DECLARE 
-    output geores;
-BEGIN
-     output.x          := record.lon;
-     output.y          := record.lat;
-     output.code       := code;
-     output.address    := record.address;
-     output.todofuken  := record.todofuken;
-     output.shikuchoson:= record.shikuchoson;
-     output.ooaza      := record.ooaza;
-     output.chiban     := record.chiban;
-     
-     RETURN output;
-END;
-$$ LANGUAGE plpgsql;
-
 --
---   NOTE: The Address Table must have a column named "geog" of type Geography
+--   NOTE: The Address Table must have a column named "geog" 
+--   of type Geography
 --
 
 CREATE OR REPLACE FUNCTION reverse_geocoder(
