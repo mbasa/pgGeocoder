@@ -139,6 +139,12 @@ $ psql -U postgres addresses
       - Geometry Type: Point
       - Remarks:
          - Geovernment data which includes "Prefectural Office" (都道府県庁) point data.
+4. デジタル庁 アドレス・ベース・レジストリ (ABR)
+      - Website: https://www.digital.go.jp/policies/base_registry_address
+      - Format: CSV (Zipped)
+      - Geometry Type: Point
+      - Remarks:
+         - Pinpoint Data for selected areas.
 
 ## Notes    
     
