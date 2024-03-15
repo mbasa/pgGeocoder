@@ -152,4 +152,8 @@ $ psql -U postgres addresses
 
 * To create `TRIGGERS` that will geocode addresses automatically on an `INSERT` or `UPDATE` operation, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/Creating-Triggers-for-the-Geocoder).
 
+
+* To do `Spatial Analytics` using `pgGeocoder` with [GeoFuse](https://github.com/mbasa/geofuse), please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/Spatial-Analytics)
+
+
 * To view the FOSS4G Presentation for pgGeocoder, please see this [WIKI Entry](https://github.com/mbasa/pgGeocoder/wiki/pgGeocoder-FOSS4G-Presentation)
