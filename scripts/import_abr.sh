@@ -27,9 +27,9 @@ psql -U ${DBROLE} -d ${DBNAME} -f ./sql/abr/dropABRTables.sql
 # Create abr schema and tables
 psql -U ${DBROLE} -d ${DBNAME} -f ./sql/abr/createABRTables.sql
 
-RSDT_TABLE="abr.rsdtdsp_dsp (lg_code ,town_id ,blk_id ,addr_id ,addr2_id ,city_name ,od_city_name ,oaza_town_name ,chome_name ,koaza_name ,blk_num ,rsdt_num ,rsdt_num2 ,basic_rsdt_div ,rsdt_addr_flg ,rsdt_addr_mtd_code ,oaza_frn_ltrs_flg ,koaza_frn_ltrs_flg ,status_flg ,efct_date ,ablt_date ,src_code ,remarks )"
-RSDT_POS_TABLE="abr.rsdtdsp_pos(lg_code ,town_id ,blk_id ,addr_id ,addr2_id ,disp_flag ,disp_method_flag ,basic_rsdt_div ,rep_pnt_lon ,rep_pnt_lat ,epsg ,scale ,source_url ,effective_date )"
-PREF_TABLE="abr.pref (lg_code ,pref_name ,pref_name_kana ,pref_name_roma ,efct_date ,ablt_date ,remarks )"
+RSDT_TABLE="abr.rsdtdsp_dsp (lg_code,machiaza_id,blk_id,rsdt_id,rsdt2_id,city,ward,oaza_cho,chome,koaza,machiaza_dist,blk_num,rsdt_num,rsdt_num2,basic_rsdt_div,rsdt_addr_flg,rsdt_addr_mtd_code,status_flg,efct_date,ablt_date,src_code,remarks)"
+RSDT_POS_TABLE="abr.rsdtdsp_pos(lg_code,machiaza_id,blk_id,rsdt_id,rsdt2_id,rsdt_addr_flg,rsdt_addr_mtd_code,rep_lon,rep_lat,rep_srid,rep_scale,rep_src_code,rsdt_addr_code_rdbl,rsdt_addr_data_mnt_date,basic_rsdt_div)"
+PREF_TABLE="abr.pref (lg_code,pref,pref_kana,pref_roma,efct_date,ablt_date,remarks)"
 
 
 echo -e "\nImporting rsdt csv files..."
