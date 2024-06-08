@@ -12,17 +12,17 @@ CREATE TEMP TABLE normalize_japanese_addresses_test (
 
 \copy normalize_japanese_addresses_test FROM 'addresses.csv' WITH CSV HEADER;
 
-SELECT plan(7104); -- SELECT count(*) FROM normalize_japanese_addresses_test
+SELECT COUNT(*) FROM normalize_japanese_addresses_test;
+\gset
+SELECT plan(:count);
 
 CREATE FUNCTION test_addresses() RETURNS SETOF TEXT AS $$
 DECLARE
   data record;
   res record;
-  actual text;
-  expected text;
-  result text;
 BEGIN
   FOR data IN SELECT * FROM normalize_japanese_addresses_test LOOP
+    -- TODO: How and when check last other column ?
     SELECT
       todofuken::text AS pref,
       shikuchoson::text AS city,
@@ -30,13 +30,9 @@ BEGIN
     INTO res
     FROM geocoder(data.input);
 
-    -- TODO: How and when check last other column ?
-    SELECT array_to_string(ARRAY[res.pref, res.city, res.town], ',') INTO actual;
-    SELECT array_to_string(ARRAY[data.pref, data.city, data.town], ',') INTO expected;
-
     RETURN NEXT is(
-      actual,
-      expected,
+      ARRAY[res.pref, res.city, res.town],
+      ARRAY[data.pref, data.city, data.town],
       data.input
     );
   END LOOP;
