@@ -20,6 +20,7 @@ create index address_t2 on pggeocoder.address_t(code);
 create index address_s1 on pggeocoder.address_s(todofuken);
 create index address_s2 on pggeocoder.address_s(shikuchoson);
 create index address_s3 on pggeocoder.address_s(code);
+create index address_s4 on pggeocoder.address_s(tr_shikuchoson);
 
 --
 -- creating index for address_o
@@ -28,7 +29,7 @@ create index address_o1 on pggeocoder.address_o(todofuken);
 create index address_o2 on pggeocoder.address_o(shikuchoson);
 create index address_o3 on pggeocoder.address_o(ooaza);
 create index address_o4 on pggeocoder.address_o(code);
-
+create index address_o5 on pggeocoder.address_o(tr_shikuchoson);
 --
 -- creating index for address
 --
@@ -44,7 +45,9 @@ create index address_g1 on pggeocoder.address_g(shikuchoson);
 create index address_g2 on pggeocoder.address_g(ooaza);
 create index address_g3 on pggeocoder.address_g(chiban);
 create index address_g4 on pggeocoder.address_g(go);
-create index address_g5 on pggeocoder.address_g using gist( geog );
+create index address_g5 on pggeocoder.address_g(tr_ooaza);
+create index address_g6 on pggeocoder.address_g(tr_shikuchoson);
+create index address_g7 on pggeocoder.address_g using gist( geog );
 
 --
 -- for Reverse Geocoding

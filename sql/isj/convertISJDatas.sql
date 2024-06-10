@@ -59,3 +59,13 @@ insert into pggeocoder.address_t (todofuken, lat, lon, code, geog)
 -- Normalize oaza data in address_o table
 --
 update pggeocoder.address_o set tr_ooaza = normalizeAddr(ooaza);
+
+--
+-- Normalize shikuchoson data in address_s table
+--
+update pggeocoder.address_s set tr_shikuchoson = normalizeAddr(shikuchoson);
+
+--
+-- Normalize shikuchoson data in address_o table
+--
+update pggeocoder.address_o set tr_shikuchoson = normalizeAddr(shikuchoson);

@@ -32,3 +32,13 @@ where a.lg_code = b.lg_code and
     a.rsdt_id = b.rsdt_id and
     COALESCE(a.rsdt2_id,'') = COALESCE(b.rsdt2_id,'') and 
     substr(a.lg_code,1,2) = substr(c.lg_code,1,2);
+
+--
+-- Normalize oaza data
+--
+update pggeocoder.address_g set tr_ooaza = normalizeAddr(ooaza);
+
+--
+-- Normalize shikuchoson data
+--
+update pggeocoder.address_g set tr_shikuchoson = normalizeAddr(shikuchoson);

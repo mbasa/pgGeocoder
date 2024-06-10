@@ -316,17 +316,18 @@ BEGIN
 
   address := replace(paddress,' ','');
   address := replace(address,'　','');
+  address := normalizeAddr( address );
 
   IF r_todofuken <> '' THEN
     tmpstr := split_part(address,r_todofuken,2);
     SELECT INTO rec * FROM pggeocoder.address_s WHERE 
      todofuken = r_todofuken AND
-     tmpstr LIKE shikuchoson||'%'
-     ORDER BY length(shikuchoson) DESC;
+     tmpstr LIKE tr_shikuchoson||'%'
+     ORDER BY length(tr_shikuchoson) DESC;
   ELSE
     SELECT INTO rec * FROM pggeocoder.address_s WHERE 
-     address LIKE shikuchoson||'%'
-     ORDER BY length(shikuchoson) DESC;
+     address LIKE tr_shikuchoson||'%'
+     ORDER BY length(tr_shikuchoson) DESC;
   END IF;
 
   --
@@ -337,10 +338,10 @@ BEGIN
     IF r_todofuken <> '' THEN
       SELECT INTO rec * FROM pggeocoder.address_s WHERE 
       todofuken = r_todofuken AND
-      address LIKE '%'||substr(shikuchoson,strpos(shikuchoson,'郡')+1)||'%';
+      address LIKE '%'||substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%';
     ELSE
       SELECT INTO rec * FROM pggeocoder.address_s WHERE 
-      address LIKE substr(shikuchoson,strpos(shikuchoson,'郡')+1)||'%';
+      address LIKE substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%';
     END IF;
   END IF;
 
@@ -371,6 +372,7 @@ DECLARE
   r_todofuken   ALIAS FOR $2;
   r_shikuchoson ALIAS FOR $3;
   address       varchar;
+  t_shikuchoson varchar;
   tmpstr        varchar;
   tmpaddr       varchar;
   rec           RECORD;
@@ -387,15 +389,19 @@ BEGIN
   address := replace(paddress,' ','');
   address := replace(address,'　','');
   
-  tmpstr  := split_part(address,r_shikuchoson,2);
-  
-  IF tmpstr = '' THEN
-    tmpstr  := split_part(address,
-      substr(r_shikuchoson,strpos(r_shikuchoson,'郡')+1),2);
+  t_shikuchoson := normalizeAddr( r_shikuchoson );
+
+  tmpstr  := split_part(normalizeAddr(address),t_shikuchoson,2);
+
+  IF tmpstr = '' THEN    
+    tmpstr  := split_part(normalizeAddr(address),
+      substr(t_shikuchoson,strpos(t_shikuchoson,'郡')+1),2);
   END IF;
   
-  tmpstr  := tmpstr || '-'; -- to match addresses like 杉並区清水１
-  tmpaddr := normalizeAddr( tmpstr );
+  --tmpstr  := tmpstr || '-'; 
+  --tmpaddr := normalizeAddr( tmpstr );
+
+  tmpaddr := tmpstr || '-'; -- to match addresses like 杉並区清水１
 
   --
   -- Trying to parse Kyoto Addresses which contains Directions
@@ -408,7 +414,7 @@ BEGIN
     
     SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
     todofuken = r_todofuken AND
-    shikuchoson = r_shikuchoson AND
+    tr_shikuchoson = t_shikuchoson AND
     strpos(tmpaddr,tr_ooaza) > 1 ORDER BY length DESC LIMIT 1; 
 
     IF FOUND THEN
@@ -431,7 +437,7 @@ BEGIN
     
     SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
     todofuken = r_todofuken AND
-    shikuchoson = r_shikuchoson AND
+    tr_shikuchoson = t_shikuchoson AND
     strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
 
     IF FOUND THEN
@@ -451,7 +457,7 @@ BEGIN
     --
     SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
     todofuken = r_todofuken AND
-    shikuchoson = r_shikuchoson AND
+    tr_shikuchoson = t_shikuchoson AND
     strpos('字'||tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
 
     IF FOUND THEN
@@ -472,10 +478,9 @@ BEGIN
   -- the 'Order By length' slows down the operation a bit
   -- but produces more accurate matches.
   --
-
   SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
    todofuken = r_todofuken AND
-   shikuchoson = r_shikuchoson AND
+   tr_shikuchoson = t_shikuchoson AND
    strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
 
   IF FOUND THEN
@@ -649,10 +654,10 @@ BEGIN
   END IF;
 
   tmpstr1 := 'SELECT * FROM pggeocoder.address_g WHERE '  ||
-   'shikuchoson = ' || quote_literal(r_shikuchoson) || ' AND ' ||
-   'ooaza       = ' || quote_literal(r_ooaza)       || ' AND ' ||
-   'chiban      = ' || quote_literal(r_chiban) || ' AND ' ||
-   'go          = ' || quote_literal(tmpstr3);
+   'tr_shikuchoson = ' || quote_literal(normalizeAddr(r_shikuchoson)) || ' AND ' ||
+   'tr_ooaza       = ' || quote_literal(normalizeAddr(r_ooaza))       || ' AND ' ||
+   'chiban         = ' || quote_literal(r_chiban) || ' AND ' ||
+   'go             = ' || quote_literal(tmpstr3);
 
   --RAISE NOTICE 'tmpstr1 %',tmpstr1;
   
@@ -662,11 +667,11 @@ BEGIN
     output.code       := 1;
     output.x          := rec.lon;
     output.y          := rec.lat;
-    output.address    := rec.todofuken||rec.shikuchoson||
-                         rec.ooaza||rec.chiban||'-'||tmpstr3;
+    output.address    := rec.todofuken||r_shikuchoson||
+                         r_ooaza||rec.chiban||'-'||tmpstr3;
     output.todofuken  := rec.todofuken;
-    output.shikuchoson:= rec.shikuchoson;
-    output.ooaza      := rec.ooaza;
+    output.shikuchoson:= r_shikuchoson;
+    output.ooaza      := r_ooaza;
     output.chiban     := rec.chiban;
     output.go         := tmpstr3;
   END IF;

@@ -22,6 +22,7 @@ create table pggeocoder.address_t (
 create table pggeocoder.address_s (
   todofuken varchar(60),
   shikuchoson varchar(60),
+  tr_shikuchoson varchar(60),
   lat float,
   lon float,
   code varchar(5),
@@ -31,6 +32,7 @@ create table pggeocoder.address_s (
 create table pggeocoder.address_o (
   todofuken varchar(60),
   shikuchoson varchar(60),
+  tr_shikuchoson varchar(60),
   ooaza varchar(60),
   tr_ooaza varchar(60),
   lat float,
@@ -52,7 +54,9 @@ create table pggeocoder.address_c (
 create table pggeocoder.address_g (
   todofuken varchar(60),
   shikuchoson varchar(60),
+  tr_shikuchoson varchar(60),
   ooaza varchar(60),
+  tr_ooaza varchar(60),
   chiban varchar(60),
   go varchar(60),
   lat float,
