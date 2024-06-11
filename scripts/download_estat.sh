@@ -1,6 +1,6 @@
 #!/bin/bash
 # ------------------------------------------------------------------------------
-# Copyright(c) 2013-2021 Georepublic
+# Copyright(c) 2013- Georepublic
 #
 # Usage:
 # ------
@@ -8,7 +8,7 @@
 #
 # Examples:
 # ---------
-#  bash scripts/download_estat.sh 2015
+#  bash scripts/download_estat.sh 2020
 #
 # ------------------------------------------------------------------------------
 
@@ -16,6 +16,7 @@ set -e # Exit script immediately on first error.
 #set -x # Print commands and their arguments as they are executed.
 
 YEAR_TCODES=(
+  "2020 A002005212015"
   "2015 A002005212015"
   #"2010 A002005212010"
   #"2005 A002005212005"
@@ -24,7 +25,7 @@ YEAR_TCODES=(
 
 function exit_with_usage()
 {
-  echo "Usage: bash scripts/download_estat.sh [Census Year (ex. 2019)]" 1>&2
+  echo "Usage: bash scripts/download_estat.sh [Census Year (ex. 2020)]" 1>&2
   for i in "${YEAR_TCODES[@]}"; do
     year_tcode=(`echo "${i}"`)
     year="${year_tcode[0]}"

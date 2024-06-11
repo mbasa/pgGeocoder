@@ -1,6 +1,6 @@
 #!/bin/bash
 # ------------------------------------------------------------------------------
-# Copyright(c) 2021 Georepublic
+# Copyright(c) 2021- Georepublic
 #
 # Usage:
 # ------
@@ -8,7 +8,7 @@
 #
 # Examples:
 # ---------
-#  bash scripts/download_ksj.sh 2021
+#  bash scripts/download_ksj.sh 2023
 #
 # ------------------------------------------------------------------------------
 
@@ -16,18 +16,21 @@
 #set -x # Print commands and their arguments as they are executed.
 
 YEAR_FNAMES=(
+  #"2024 N03-20240101" # Encoding changed from SJIS to UTF8 and prefecture data is added
+  "2023 N03-20230101"
+  #"2022 N03-20220101" # Prefecture data is merged
   "2021 N03-20210101"
   "2020 N03-20200101"
   "2019 N03-190101"
   "2018 N03-180101"
-  "2017 N03-170101"
-  "2016 N03-160101"
-  "2015 N03-150101"
+  #"2017 N03-170101"
+  #"2016 N03-160101"
+  #"2015 N03-150101"
 )
 
 function exit_with_usage()
 {
-  echo "Usage: bash scripts/download_ksj.sh [Year (ex. 2021)]" 1>&2
+  echo "Usage: bash scripts/download_ksj.sh [Year (ex. 2023)]" 1>&2
   for i in "${YEAR_FNAMES[@]}"; do
     year_fname=(`echo "${i}"`)
     year="${year_fname[0]}"
@@ -99,7 +102,7 @@ for shp in ${OUT_ADMIN_BOUNDARY_SHP_DIR}/*.shp; do
   sql=${OUT_ADMIN_BOUNDARY_SQL_DIR}/`basename ${shp} .shp`.sql
   #echo "${shp} => ${sql}"
   # ogrinfo --format PGDump
-  ogr2ogr -s_srs EPSG:4612 \
+  ogr2ogr -s_srs EPSG:6668 \
           -t_srs EPSG:4326 \
           -f PGDump \
           ${sql} \
@@ -117,8 +120,8 @@ done
 
 # Download government zip
 echo "Downloading government zip file and extracting shp file..."
-url="https://nlftp.mlit.go.jp/ksj/gml/data/P28/P28-13/P28-13.zip"
-zip="${OUT_GOVERNMENT_ZIP_DIR}/P28-13.zip"
+url="https://nlftp.mlit.go.jp/ksj/gml/data/P28/P28-22/P28-22.zip"
+zip="${OUT_GOVERNMENT_ZIP_DIR}/P28-22.zip"
 if [ ! -e "${zip}" ] ; then
   curl -s "${url}" > "${zip}"
 fi

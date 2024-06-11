@@ -24,14 +24,14 @@
    DBNAME=addresses
    DBHOST=localhost
    DBPORT=5432
-   YEAR_ISJ=2020
-   YEAR_KSJ=2021
-   YEAR_ESTAT=2015
+   YEAR_ISJ=2023
+   YEAR_KSJ=2023
+   YEAR_ESTAT=2020
    ```
 3. Create address database (with same as `.env` values).  
    (If the database exists, drop it at first.)
    ```bash
-   # dropdb -U postgres addresses
+   $ dropdb -U postgres addresses
    $ createdb -U postgres addresses
    ```
 4. Run install and download/import scripts.
@@ -125,7 +125,7 @@ $ psql -U postgres addresses
    - Website: https://nlftp.mlit.go.jp/ksj/index.html
    - Format: ESRI Shapefile (or GML)
    - 行政区域データ:
-      - Website: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_0.html
+      - Website: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2023.html
       - Geometry Type: Polygon
       - Remarks:
          - "City Level" (市区町村レベル) admin boundary data.
@@ -135,7 +135,7 @@ $ psql -U postgres addresses
       - Remarks:
          - "City Office" (市区町村役場) point data.
    - 国・都道府県の機関データ:
-      - Website: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P28.html
+      - Website: https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P28-2022.html
       - Geometry Type: Point
       - Remarks:
          - Geovernment data which includes "Prefectural Office" (都道府県庁) point data.
