@@ -6,9 +6,18 @@ set -e # Exit script immediately on first error.
 DIR=$(cd $(dirname $0); pwd)
 
 source "${DIR}/../.env"
-source "${DIR}/.env.test"
+source "${DIR}/.env"
 
-# TODO: Drop DB if exists
+if [ -z ${TESTDBNAME} ]; then
+  echo "TESTDBNAME is not set."
+  exit 1
+fi
+
+# https://stackoverflow.com/questions/14549270/check-if-database-exists-in-postgresql-using-shell
+if psql -U ${DBROLE} -lqt | cut -d \| -f 1 | grep -qw ${TESTDBNAME}; then
+  echo "Database ${TESTDBNAME} already exists."
+  exit 1
+fi
 
 createdb -U ${DBROLE} ${TESTDBNAME}
 psql -U ${DBROLE} -d ${TESTDBNAME} -f "${DIR}/../sql/createTables.sql"
@@ -23,5 +32,7 @@ psql -U ${DBROLE} -d ${TESTDBNAME} -c "UPDATE pggeocoder.address_t SET geog = ST
 psql -U ${DBROLE} -d ${TESTDBNAME} -c "UPDATE pggeocoder.address_s SET geog = ST_SetSRID(ST_MakePoint(lon, lat), 4326)::GEOGRAPHY;"
 psql -U ${DBROLE} -d ${TESTDBNAME} -c "UPDATE pggeocoder.address_o SET geog = ST_SetSRID(ST_MakePoint(lon, lat), 4326)::GEOGRAPHY;"
 psql -U ${DBROLE} -d ${TESTDBNAME} -c "UPDATE pggeocoder.address_o SET tr_ooaza = normalizeAddr(ooaza);"
+psql -U ${DBROLE} -d ${TESTDBNAME} -c "UPDATE pggeocoder.address_s SET tr_shikuchoson = normalizeAddr(shikuchoson);"
+psql -U ${DBROLE} -d ${TESTDBNAME} -c "UPDATE pggeocoder.address_o SET tr_shikuchoson = normalizeAddr(shikuchoson);"
 
 psql -U ${DBROLE} -d ${TESTDBNAME} -f "${DIR}/../sql/maintTables.sql"
