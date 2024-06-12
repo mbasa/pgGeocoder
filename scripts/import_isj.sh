@@ -70,5 +70,9 @@ done
 for sql in ${IN_PATCHES_DIR}/*.sql ; do
   psql -U ${DBROLE} -d ${DBNAME} -f ${sql}
 done
+# Make sure normalization after patching
+psql -U ${DBROLE} -d ${DBNAME} -c "update pggeocoder.address_o set tr_ooaza = normalizeAddr(ooaza);"
+psql -U ${DBROLE} -d ${DBNAME} -c "update pggeocoder.address_s set tr_shikuchoson = normalizeAddr(shikuchoson);"
+psql -U ${DBROLE} -d ${DBNAME} -c "update pggeocoder.address_o set tr_shikuchoson = normalizeAddr(shikuchoson);"
 
 echo -e "\nDone!"
