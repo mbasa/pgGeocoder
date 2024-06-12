@@ -338,10 +338,12 @@ BEGIN
     IF r_todofuken <> '' THEN
       SELECT INTO rec * FROM pggeocoder.address_s WHERE 
       todofuken = r_todofuken AND
-      address LIKE '%'||substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%';
+      address LIKE '%'||substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%'
+      ORDER BY length(tr_shikuchoson) DESC;
     ELSE
       SELECT INTO rec * FROM pggeocoder.address_s WHERE 
-      address LIKE substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%';
+      address LIKE substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%'
+      ORDER BY length(tr_shikuchoson) DESC;
     END IF;
   END IF;
 
