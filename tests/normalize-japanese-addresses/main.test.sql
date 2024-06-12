@@ -387,7 +387,7 @@ SELECT is(
 
 SELECT is(
   geocoder_formatted('千葉県鎌ケ谷市中佐津間２丁目１５－１４－９'),
-  json_formatted('{"pref": "千葉県", "city": "鎌ヶ谷市", "town": "中佐津間二丁目", "addr": "15-14-9", "lat": 35.800253, "lng": 140.002133, "level": 3}'),
+  json_formatted('{"pref": "千葉県", "city": "鎌ケ谷市", "town": "中佐津間二丁目", "addr": "15-14-9", "lat": 35.800253, "lng": 140.002133, "level": 3}'),
   '千葉県鎌ケ谷市中佐津間２丁目１５－１４－９'
 );
 
