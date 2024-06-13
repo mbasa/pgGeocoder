@@ -427,30 +427,18 @@ BEGIN
     SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
     todofuken = r_todofuken AND
     tr_shikuchoson = t_shikuchoson AND
-    strpos(tmpaddr,tr_ooaza) > 1 ORDER BY length DESC LIMIT 1; 
-
-    IF FOUND THEN
-        output.x          := rec.lon;
-        output.y          := rec.lat;
-        output.code       := 2;
-        output.address    := rec.todofuken||rec.shikuchoson||rec.ooaza;
-        output.todofuken  := rec.todofuken;
-        output.shikuchoson:= rec.shikuchoson;
-        output.ooaza      := rec.ooaza;
-        
-        RETURN output;
-    END IF;  
+    strpos(tmpaddr,tr_ooaza) >= 1 ORDER BY length DESC LIMIT 1; 
+  ELSE      
+    --
+    -- the 'Order By length' slows down the operation a bit
+    -- but produces more accurate matches.
+    --
+    SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
+     todofuken = r_todofuken AND
+     tr_shikuchoson = t_shikuchoson AND
+     strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
   END IF;
-
-  --
-  -- the 'Order By length' slows down the operation a bit
-  -- but produces more accurate matches.
-  --
-  SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
-   todofuken = r_todofuken AND
-   tr_shikuchoson = t_shikuchoson AND
-   strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
-
+  
   IF FOUND THEN
      output.x          := rec.lon;
      output.y          := rec.lat;
