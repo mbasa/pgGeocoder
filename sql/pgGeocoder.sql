@@ -199,6 +199,20 @@ BEGIN
   END IF;
   
   --
+  -- Removing 大字 since addresses sometimes omit this
+  --
+  IF address ~ '^大字' THEN
+    address := trim( leading address, '大字' );
+  END IF;
+
+  --
+  -- Removing 字 since addresses sometimes omit this
+  --
+  IF address ~ '^字' THEN
+    address := trim( leading address, '字' );
+  END IF;
+
+  --
   -- Adding Kobayashi-san's rule set
   --
   address := translate( address,
@@ -406,13 +420,23 @@ BEGIN
   tmpaddr := tmpstr || '-'; -- to match addresses like 杉並区清水１
 
   --
+  -- Removing 大字 since addresses sometimes omit this
+  --
+  IF tmpaddr ~ '^大字' THEN
+    tmpaddr := trim( leading tmpaddr, '大字' );
+  END IF;
+
+  --
+  -- Removing 字 since addresses sometimes omit this
+  --
+  IF tmpaddr ~ '^字' THEN
+    tmpaddr := trim( leading tmpaddr, '字' );
+  END IF;
+
+  --
   -- Trying to parse Kyoto Addresses which contains Directions
   --
   IF r_todofuken = '京都府' THEN
-    --
-    -- For Kyoto Addresses which adds an extra '字'
-    --
-    address := replace(address,'市字','市');
     
     SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
     todofuken = r_todofuken AND
@@ -431,50 +455,6 @@ BEGIN
         RETURN output;
     END IF;  
   END IF;
-
-  --
-  -- Trying to parse Okinawa Addresses which omits '字'
-  --
-  IF r_todofuken = '沖縄県' THEN
-    
-    SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
-    todofuken = r_todofuken AND
-    tr_shikuchoson = t_shikuchoson AND
-    strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
-
-    IF FOUND THEN
-        output.x          := rec.lon;
-        output.y          := rec.lat;
-        output.code       := 2;
-        output.address    := rec.todofuken||rec.shikuchoson||rec.ooaza;
-        output.todofuken  := rec.todofuken;
-        output.shikuchoson:= rec.shikuchoson;
-        output.ooaza      := rec.ooaza;
-        
-        RETURN output;
-    END IF;
-
-    --
-    -- Adding '字' if there was no match. 
-    --
-    SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
-    todofuken = r_todofuken AND
-    tr_shikuchoson = t_shikuchoson AND
-    strpos('字'||tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
-
-    IF FOUND THEN
-        output.x          := rec.lon;
-        output.y          := rec.lat;
-        output.code       := 2;
-        output.address    := rec.todofuken||rec.shikuchoson||rec.ooaza;
-        output.todofuken  := rec.todofuken;
-        output.shikuchoson:= rec.shikuchoson;
-        output.ooaza      := rec.ooaza;            
-    END IF; 
-    
-    RETURN output;
-  END IF;
-  
 
   --
   -- the 'Order By length' slows down the operation a bit
