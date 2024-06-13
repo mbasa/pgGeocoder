@@ -1,6 +1,7 @@
 BEGIN;
 
 CREATE TEMP TABLE normalize_japanese_addresses_temp (
+  id serial,
   input text,
   pref text,
   city text,
@@ -8,7 +9,7 @@ CREATE TEMP TABLE normalize_japanese_addresses_temp (
   other text
 );
 
-\copy normalize_japanese_addresses_temp FROM 'addresses.csv' WITH CSV HEADER;
+\copy normalize_japanese_addresses_temp(input, pref, city, town, other) FROM 'addresses.csv' WITH CSV HEADER;
 
 CREATE FUNCTION fix_csv_oaza_prefix_to_match_isj() RETURNS INTEGER AS $$
 DECLARE
@@ -56,6 +57,6 @@ $$ LANGUAGE plpgsql;
 
 SELECT fix_csv_oaza_prefix_to_match_isj();
 
-\copy normalize_japanese_addresses_temp TO 'addresses.csv' WITH CSV HEADER;
+\copy (SELECT input AS "住所", pref AS "都道府県", city AS "市区町村", town AS "町丁目", other AS "その他" FROM normalize_japanese_addresses_temp ORDER BY id) TO 'addresses.csv' WITH CSV HEADER;
 
 ROLLBACK;
