@@ -199,17 +199,10 @@ BEGIN
   END IF;
   
   --
-  -- Removing 大字 since addresses sometimes omit this
+  -- Removing 大字 OR 字 since addresses sometimes omit this
   --
-  IF address ~ '^大字' THEN
-    address := trim( leading address, '大字' );
-  END IF;
-
-  --
-  -- Removing 字 since addresses sometimes omit this
-  --
-  IF address ~ '^字' THEN
-    address := trim( leading address, '字' );
+  IF address ~ '^大字' OR address ~ '^字' THEN
+    address := regexp_replace(address, '^(大字|字)', '');
   END IF;
 
   --
@@ -420,17 +413,10 @@ BEGIN
   tmpaddr := tmpstr || '-'; -- to match addresses like 杉並区清水１
 
   --
-  -- Removing 大字 since addresses sometimes omit this
+  -- Removing 大字 OR 字 since addresses sometimes omit this
   --
-  IF tmpaddr ~ '^大字' THEN
-    tmpaddr := trim( leading tmpaddr, '大字' );
-  END IF;
-
-  --
-  -- Removing 字 since addresses sometimes omit this
-  --
-  IF tmpaddr ~ '^字' THEN
-    tmpaddr := trim( leading tmpaddr, '字' );
+  IF tmpaddr ~ '^大字' OR tmpaddr ~ '^字' THEN
+    tmpaddr := regexp_replace(tmpaddr, '^(大字|字)', '');
   END IF;
 
   --
