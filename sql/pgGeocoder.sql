@@ -323,17 +323,16 @@ BEGIN
 
   address := replace(paddress,' ','');
   address := replace(address,'　','');
-  address := normalizeAddr( address );
 
   IF r_todofuken <> '' THEN
     tmpstr := split_part(address,r_todofuken,2);
     SELECT INTO rec * FROM pggeocoder.address_s WHERE 
      todofuken = r_todofuken AND
-     tmpstr LIKE tr_shikuchoson||'%'
+     normalizeAddr(tmpstr) LIKE tr_shikuchoson||'%'
      ORDER BY length(tr_shikuchoson) DESC;
   ELSE
     SELECT INTO rec * FROM pggeocoder.address_s WHERE 
-     address LIKE tr_shikuchoson||'%'
+     normalizeAddr(address) LIKE tr_shikuchoson||'%'
      ORDER BY length(tr_shikuchoson) DESC;
   END IF;
 
@@ -438,7 +437,7 @@ BEGIN
      tr_shikuchoson = t_shikuchoson AND
      strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
   END IF;
-  
+
   IF FOUND THEN
      output.x          := rec.lon;
      output.y          := rec.lat;
