@@ -57,6 +57,41 @@ $$ LANGUAGE plpgsql;
 
 SELECT fix_csv_oaza_prefix_to_match_isj();
 
+CREATE OR REPLACE FUNCTION delete_csv_addresses_not_in_isj() RETURNS INTEGER AS $$
+DECLARE
+  rec_csv record;
+  rec_isj record;
+  deleted_count integer;
+BEGIN
+  deleted_count := 0;
+  FOR rec_csv IN
+    SELECT * FROM normalize_japanese_addresses_temp
+  LOOP
+    SELECT
+      todofuken::text AS pref,
+      shikuchoson::text AS city,
+      ooaza::text AS towns
+    INTO rec_isj
+    FROM pggeocoder.address_o
+    WHERE
+      todofuken = rec_csv.pref AND
+      shikuchoson = rec_csv.city AND
+      ooaza = rec_csv.town;
+
+    IF NOT FOUND THEN
+      RAISE NOTICE 'Delete: %', rec_csv;
+      DELETE FROM normalize_japanese_addresses_temp
+      WHERE id = rec_csv.id;
+      deleted_count := deleted_count + 1;
+    END IF;
+  END LOOP;
+  RAISE NOTICE 'Deleted % rows', deleted_count;
+  RETURN deleted_count;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT delete_csv_addresses_not_in_isj();
+
 \copy (SELECT input AS "住所", pref AS "都道府県", city AS "市区町村", town AS "町丁目", other AS "その他" FROM normalize_japanese_addresses_temp ORDER BY id) TO 'addresses.csv' WITH CSV HEADER;
 
 ROLLBACK;
