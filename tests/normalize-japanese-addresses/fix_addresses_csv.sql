@@ -44,8 +44,8 @@ BEGIN
 
     IF input_has_prefix = FALSE AND array_length(rec_isj.towns, 1) > 1 THEN
       UPDATE normalize_japanese_addresses_temp
-      SET town = regexp_replace(town, '^(大字|字)', '')
-      WHERE input = rec_csv.input;
+        SET town = regexp_replace(town, '^(大字|字)', '')
+        WHERE input = rec_csv.input;
       fixed_count := fixed_count + 1;
       RAISE NOTICE '  Fixed';
     END IF;
@@ -81,7 +81,7 @@ BEGIN
     IF NOT FOUND THEN
       RAISE NOTICE 'Delete: %', rec_csv;
       DELETE FROM normalize_japanese_addresses_temp
-      WHERE id = rec_csv.id;
+        WHERE id = rec_csv.id;
       deleted_count := deleted_count + 1;
     END IF;
   END LOOP;
@@ -91,6 +91,16 @@ END;
 $$ LANGUAGE plpgsql;
 
 SELECT delete_csv_addresses_not_in_isj();
+
+CREATE OR REPLACE FUNCTION fix_csv_input_to_match_isj() RETURNS VOID AS $$
+BEGIN
+  UPDATE normalize_japanese_addresses_temp
+    SET input = replace(input, '新宿区三栄町', '新宿区四谷三栄町')
+    WHERE input LIKE '%新宿区三栄町%';
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT fix_csv_input_to_match_isj();
 
 \copy (SELECT input AS "住所", pref AS "都道府県", city AS "市区町村", town AS "町丁目", other AS "その他" FROM normalize_japanese_addresses_temp ORDER BY id) TO 'addresses.csv' WITH CSV HEADER;
 
