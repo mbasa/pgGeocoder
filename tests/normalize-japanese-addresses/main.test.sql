@@ -19,16 +19,17 @@ DECLARE
   res RECORD;
 BEGIN
   SELECT
-    todofuken::text AS pref,
-    shikuchoson::text AS city,
-    ooaza::text AS town,
-    -- TODO: other
-    CASE WHEN y = -999 THEN NULL
-      ELSE y
-    END::double precision AS lat,
-    CASE WHEN x = -999 THEN NULL
-      ELSE X
-    END::double precision AS lng,
+    COALESCE(todofuken::text, '') AS pref,
+    COALESCE(shikuchoson::text, '') AS city,
+    COALESCE(ooaza::text, '') AS town,
+    -- TODO: other,
+    -- TODO: lat, lng
+    -- CASE WHEN y = -999 THEN NULL
+    --   ELSE y
+    -- END::double precision AS lat,
+    -- CASE WHEN x = -999 THEN NULL
+    --   ELSE X
+    -- END::double precision AS lng,
     CASE WHEN code = -99 THEN 0
       ELSE 6 - code
     END::smallint AS level
@@ -51,9 +52,10 @@ BEGIN
     pref text,
     city text,
     town text,
-    -- other text,
-    lat double precision,
-    lng double precision,
+    -- TODO: other text,
+    -- TODO: lat, lng
+    -- lat double precision,
+    -- lng double precision,
     level smallint
   );
   RETURN res;
