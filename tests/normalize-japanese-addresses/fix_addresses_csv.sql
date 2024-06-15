@@ -11,6 +11,16 @@ CREATE TEMP TABLE normalize_japanese_addresses_temp (
 
 \copy normalize_japanese_addresses_temp(input, pref, city, town, other) FROM 'addresses.csv' WITH CSV HEADER;
 
+CREATE OR REPLACE FUNCTION fix_csv_city_kamagaya() RETURNS VOID AS $$
+BEGIN
+  UPDATE normalize_japanese_addresses_temp
+    SET city = '鎌ケ谷市'
+    WHERE city = '鎌ヶ谷市';
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT fix_csv_city_kamagaya();
+
 CREATE FUNCTION fix_csv_oaza_prefix_to_match_isj() RETURNS INTEGER AS $$
 DECLARE
   rec_csv record;
@@ -92,15 +102,15 @@ $$ LANGUAGE plpgsql;
 
 SELECT delete_csv_addresses_not_in_isj();
 
-CREATE OR REPLACE FUNCTION fix_csv_input_to_match_isj() RETURNS VOID AS $$
-BEGIN
-  UPDATE normalize_japanese_addresses_temp
-    SET input = replace(input, '新宿区三栄町', '新宿区四谷三栄町')
-    WHERE input LIKE '%新宿区三栄町%';
-END;
-$$ LANGUAGE plpgsql;
+-- CREATE OR REPLACE FUNCTION fix_csv_input_to_match_isj() RETURNS VOID AS $$
+-- BEGIN
+--   UPDATE normalize_japanese_addresses_temp
+--     SET input = replace(input, '新宿区三栄町', '新宿区四谷三栄町')
+--     WHERE input LIKE '%新宿区三栄町%';
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-SELECT fix_csv_input_to_match_isj();
+-- SELECT fix_csv_input_to_match_isj();
 
 \copy (SELECT input AS "住所", pref AS "都道府県", city AS "市区町村", town AS "町丁目", other AS "その他" FROM normalize_japanese_addresses_temp ORDER BY id) TO 'addresses.csv' WITH CSV HEADER;
 
