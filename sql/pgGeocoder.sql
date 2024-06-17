@@ -331,8 +331,9 @@ BEGIN
      normalizeAddr(tmpstr) LIKE tr_shikuchoson||'%'
      ORDER BY length(tr_shikuchoson) DESC;
   ELSE
+    tmpstr := normalizeAddr(address);
     SELECT INTO rec * FROM pggeocoder.address_s WHERE 
-     normalizeAddr(address) LIKE tr_shikuchoson||'%'
+     tmpstr LIKE tr_shikuchoson||'%'
      ORDER BY length(tr_shikuchoson) DESC;
   END IF;
 
@@ -341,14 +342,16 @@ BEGIN
   -- normally written in the address
   --
   IF NOT FOUND THEN
-    IF r_todofuken <> '' THEN
+    tmpstr := normalizeAddr(address);
+
+    IF r_todofuken <> '' THEN      
       SELECT INTO rec * FROM pggeocoder.address_s WHERE 
       todofuken = r_todofuken AND
-      address LIKE '%'||substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%'
+      tmpstr LIKE '%'||substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%'
       ORDER BY length(tr_shikuchoson) DESC;
     ELSE
       SELECT INTO rec * FROM pggeocoder.address_s WHERE 
-      address LIKE substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%'
+      tmpstr LIKE substr(tr_shikuchoson,strpos(tr_shikuchoson,'郡')+1)||'%'
       ORDER BY length(tr_shikuchoson) DESC;
     END IF;
   END IF;
@@ -423,10 +426,13 @@ BEGIN
   --
   IF r_todofuken = '京都府' THEN
     
-    SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
+    SELECT INTO rec *,
+    strpos(address,ooaza) AS pos,
+    length(tr_ooaza) AS length 
+    FROM pggeocoder.address_o WHERE 
     todofuken = r_todofuken AND
     tr_shikuchoson = t_shikuchoson AND
-    strpos(tmpaddr,tr_ooaza) >= 1 ORDER BY length DESC LIMIT 1; 
+    strpos(tmpaddr,tr_ooaza) >= 1 ORDER BY length DESC,pos DESC LIMIT 1; 
   ELSE      
     --
     -- the 'Order By length' slows down the operation a bit
