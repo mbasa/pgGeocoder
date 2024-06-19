@@ -112,6 +112,30 @@ SELECT delete_csv_addresses_not_in_isj();
 
 -- SELECT fix_csv_input_to_match_isj();
 
+CREATE OR REPLACE FUNCTION fix_csv_oaza_to_include_koaza() RETURNS VOID AS $$
+BEGIN
+  UPDATE normalize_japanese_addresses_temp
+    SET town = '木津池田'
+    WHERE
+      input LIKE '京都府木津川市木津池田%' AND
+      town = '木津';
+
+  UPDATE normalize_japanese_addresses_temp
+    SET town = '下海印寺方丸'
+    WHERE
+      input LIKE '京都府長岡京市下海印寺方丸%' AND
+      town = '下海印寺';
+
+  UPDATE normalize_japanese_addresses_temp
+    SET town = '神足麦生'
+    WHERE
+      input LIKE '京都府長岡京市神足麦生%' AND
+      town = '神足';
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT fix_csv_oaza_to_include_koaza();
+
 \copy (SELECT input AS "住所", pref AS "都道府県", city AS "市区町村", town AS "町丁目", other AS "その他" FROM normalize_japanese_addresses_temp ORDER BY id) TO 'addresses.csv' WITH CSV HEADER;
 
 ROLLBACK;
