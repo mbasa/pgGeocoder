@@ -73,18 +73,3 @@ insert into pggeocoder.address_t (todofuken, lat, lon, code, geog)
   select pref_name, st_y(geom), st_x(geom), pref_code,
   geom::geography from isj.pref order by pref_code;
 
-
---
--- Normalize oaza data in address_o table
---
-update pggeocoder.address_o set tr_ooaza = normalizeAddr(ooaza);
-
---
--- Normalize shikuchoson data in address_s table
---
-update pggeocoder.address_s set tr_shikuchoson = normalizeAddr(shikuchoson);
-
---
--- Normalize shikuchoson data in address_o table
---
-update pggeocoder.address_o set tr_shikuchoson = normalizeAddr(shikuchoson);
