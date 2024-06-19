@@ -11,6 +11,7 @@ CREATE TEMP TABLE normalize_japanese_addresses_test (
 );
 
 \copy normalize_japanese_addresses_test FROM 'addresses.csv' WITH CSV HEADER;
+\copy normalize_japanese_addresses_test FROM 'addresses2023.csv' WITH CSV HEADER;
 
 SELECT COUNT(*) FROM normalize_japanese_addresses_test;
 \gset
