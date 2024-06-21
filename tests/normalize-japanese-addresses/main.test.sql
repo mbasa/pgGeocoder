@@ -209,7 +209,7 @@ SELECT is(
 
 SELECT is(
   geocoder_formatted('長野県長野市長野東之門町2462'),
-  json_formatted('{"pref": "長野県", "city": "長野市", "town": "大字長野", "addr": "東之門町2462", "lat": 36.674892, "lng": 138.178449, "level": 3}'),
+  json_formatted('{"pref": "長野県", "city": "長野市", "town": "大字長野東之門町", "addr": "2462", "lat": 36.674892, "lng": 138.178449, "level": 3}'),
   '長野県長野市長野東之門町2462'
 );
 
@@ -893,7 +893,7 @@ SELECT is(
 
 SELECT is(
   geocoder_formatted('愛知県あま市西今宿梶村一３８番地４'),
-  json_formatted('{"pref": "愛知県", "city": "あま市", "town": "西今宿", "addr": "梶村一38-4", "lat": 35.2002, "lng": 136.831606, "level": 3}'),
+  json_formatted('{"pref": "愛知県", "city": "あま市", "town": "西今宿梶村一", "addr": "38-4", "lat": 35.2002, "lng": 136.831606, "level": 3}'),
   '愛知県あま市西今宿梶村一３８番地４'
 );
 
@@ -941,7 +941,7 @@ SELECT is(
 
 SELECT is(
   geocoder_formatted('京都府宇治市莵道森本8−10'),
-  json_formatted('{"pref": "京都府", "city": "宇治市", "town": "莵道", "addr": "森本8-10", "level": 3, "lat": 34.904244, "lng": 135.827041}'),
+  json_formatted('{"pref": "京都府", "city": "宇治市", "town": "莵道森本", "addr": "8-10", "level": 3, "lat": 34.904244, "lng": 135.827041}'),
   '京都府宇治市莵道森本8−10'
 );
 
