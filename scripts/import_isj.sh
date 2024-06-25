@@ -39,8 +39,9 @@ psql -U ${DBROLE} -d ${DBNAME} -f ./sql/isj/dropISJTables.sql
 psql -U ${DBROLE} -d ${DBNAME} -f ./sql/isj/createISJTables.sql
 
 
-OAZA_TABLE="isj.oaza"
-GAIKU_TABLE="isj.gaiku"
+OAZA_TABLE="isj.oaza(pref_code,pref_name,city_code,city_name,oaza_code,oaza_name,lat,lon,source_code,oaza_class_code)"
+GAIKU_TABLE="isj.gaiku (pref_name,city_name,oaza_name,koaza_name,gaiku_code,cs_number,x,y,lat,lon,residence_display_flag,representative_flag,before_update_flag,after_update_flag)"
+
 if ((year < 2017)); then
   GAIKU_TABLE="isj.gaiku (pref_name, city_name, oaza_name, gaiku_code, cs_number, x, y, lat, lon, residence_display_flag, representative_flag, before_update_flag, after_update_flag)"
 fi
