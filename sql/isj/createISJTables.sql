@@ -20,7 +20,8 @@ create table isj.gaiku (
   representative_flag boolean, -- 代表フラグ
   before_update_flag smallint, -- 更新前履歴フラグ (1：新規作成、2：名称変更、3：削除、0：変更なし（半角）)
   after_update_flag smallint, -- 更新後履歴フラグ (1：新規作成、2：名称変更、3：削除、0：変更なし（半角）)
-  geom geometry('POINT', 4326)
+  geom geometry('POINT', 4326),
+  year text default :v_year
 );
 
 --
@@ -39,5 +40,6 @@ create table isj.oaza (
   lon float, -- 経度   
   source_code smallint, -- 原典資料コード (1：自治体資料、2：街区レベル位置参照情報、3：1/25000地形図、0：その他資料)
   oaza_class_code smallint, -- 大字・字・丁目区分コード (1：大字、2：字、3：丁目、0：不明（通称）)
-  geom geometry('POINT', 4326)
+  geom geometry('POINT', 4326),
+  year text default :v_year
 );
