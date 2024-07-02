@@ -545,9 +545,9 @@ BEGIN
   END LOOP;
 
   tmpstr1 := 'SELECT * FROM '|| preftab ||' WHERE '  ||
-   'shikuchoson = ' || quote_literal(r_shikuchoson) || ' AND ' ||
-   'ooaza       = ' || quote_literal(r_ooaza)       || ' AND ' ||
-   'chiban      = ' || quote_literal(tmpstr3);
+   'tr_shikuchoson = ' || quote_literal(shikuchoson) || ' AND ' ||
+   'tr_ooaza       = ' || quote_literal(ooaza)       || ' AND ' ||
+   'chiban         = ' || quote_literal(tmpstr3);
 
    EXECUTE tmpstr1 into rec;
       
