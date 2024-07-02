@@ -28,6 +28,12 @@
    YEAR_KSJ=2023
    YEAR_ESTAT=2020
    ```
+   **Note:** To download and install address data from multiple years to have a historical data set, the `YEAR_ISJ` parameter can be set as follows: 
+   ```
+   YEAR_ISJ="2013,2017,2023"
+   ```
+   Be aware though that this will require substantial disk space resources.
+   
 3. Create address database (with same as `.env` values).  
    (If the database exists, drop it at first.)
    ```bash

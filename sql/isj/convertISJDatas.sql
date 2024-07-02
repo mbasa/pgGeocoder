@@ -5,23 +5,9 @@
 -- create index gaiku_geom_idx on isj.gaiku using gist(geom);
 update isj.gaiku set geom = st_setsrid(st_makepoint(lon, lat), 4326);
 
--- deleting duplicates
-delete from isj.gaiku a using isj.gaiku b where a.gid > b.gid and 
-  a.pref_name = b.pref_name and 
-  a.city_name = b.city_name and 
-  a.oaza_name || coalesce(a.koaza_name, '') = b.oaza_name || coalesce(b.koaza_name, '') and 
-  a.gaiku_code = b.gaiku_code;
-
-
 -- alter table isj.oaza add column geom geometry('POINT', 4326);
 -- create index oaza_geom_idx on isj.oaza using gist(geom);
 update isj.oaza set geom = st_setsrid(st_makepoint(lon, lat), 4326);
-
--- deleting duplicates
-delete from isj.oaza a using isj.oaza b where a.gid > b.gid and 
-  a.pref_name = b.pref_name and 
-  a.city_name = b.city_name and 
-  a.oaza_name = b.oaza_name;
 
 --
 -- Creating a temporary Koaza table from the Oaza/Gaiku tables
