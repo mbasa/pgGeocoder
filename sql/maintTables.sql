@@ -30,13 +30,17 @@ create index address_o2 on pggeocoder.address_o(shikuchoson);
 create index address_o3 on pggeocoder.address_o(ooaza);
 create index address_o4 on pggeocoder.address_o(code);
 create index address_o5 on pggeocoder.address_o(tr_shikuchoson);
+create index address_o6 on pggeocoder.address_o(tr_ooaza);
+
 --
--- creating index for address
+-- creating index for address_c
 --
 create index address_c1 on pggeocoder.address_c(todofuken);
 create index address_c2 on pggeocoder.address_c(shikuchoson);
 create index address_c3 on pggeocoder.address_c(ooaza);
 create index address_c4 on pggeocoder.address_c(chiban);
+create index address_c5 on pggeocoder.address_c(tr_shikuchoson);
+create index address_c6 on pggeocoder.address_c(tr_ooaza);
 
 --
 -- creating index for address_g

@@ -53,7 +53,9 @@ create unique index address_o_u on pggeocoder.address_o (todofuken,shikuchoson,o
 create table pggeocoder.address_c (
   todofuken varchar(60),
   shikuchoson varchar(60),
+  tr_shikuchoson varchar(60),
   ooaza varchar(60),
+  tr_ooaza varchar(60),
   chiban varchar(60),
   lat float,
   lon float,
