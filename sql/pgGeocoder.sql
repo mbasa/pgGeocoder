@@ -219,6 +219,11 @@ BEGIN
   address := replace(address,'--','-');
 
   --
+  -- Replacing 通り with 通. Common address mistake.
+  --
+  address := replace(address,'通り','通');
+
+  --
   -- Replacing floor num in address ie 清水1-3-14 3F
   --
   address := regexp_replace(address,' \d*F' ,' nF');
