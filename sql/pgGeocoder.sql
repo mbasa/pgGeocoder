@@ -55,7 +55,6 @@ DECLARE
  gc      geores;
  output  geores;
  matching_nomatch     integer;
- matching_eki         integer;
  matching_todofuken   integer;
  matching_shikuchoson integer;
  matching_ooaza       integer;
@@ -64,13 +63,12 @@ DECLARE
 
 BEGIN
 
-  matching_nomatch     := -99;
-  matching_eki         := 30;
-  matching_todofuken   := 5;
-  matching_shikuchoson := 4;
+  matching_nomatch     := 0;
+  matching_todofuken   := 1;
+  matching_shikuchoson := 2;
   matching_ooaza       := 3;
-  matching_chiban      := 2;
-  matching_pinpnt      := 1;
+  matching_chiban      := 4;
+  matching_pinpnt      := 5;
   
   output := searchTodofuken( address );
 
