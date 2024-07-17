@@ -2,6 +2,7 @@
 
 data/
 work/
+tests/fixtures/address_?.csv
 .DS_Store
 .project
 .idea/
