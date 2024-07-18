@@ -24,9 +24,9 @@ psql -U ${DBROLE} -d ${TESTDBNAME} -f "${DIR}/../sql/createTables.sql"
 psql -U ${DBROLE} -d ${TESTDBNAME} -f "${DIR}/../sql/pgGeocoder.sql"
 psql -U ${DBROLE} -d ${TESTDBNAME} -f "${DIR}/../sql/pgReverseGeocoder.sql"
 
-gzip -d -k "${DIR}/fixtures/address_t.csv.gz"
-gzip -d -k "${DIR}/fixtures/address_s.csv.gz"
-gzip -d -k "${DIR}/fixtures/address_o.csv.gz"
+gzip -d -f -k "${DIR}/fixtures/address_t.csv.gz"
+gzip -d -f -k "${DIR}/fixtures/address_s.csv.gz"
+gzip -d -f -k "${DIR}/fixtures/address_o.csv.gz"
 
 psql -U ${DBROLE} -d ${TESTDBNAME} -c "\copy pggeocoder.address_t(todofuken, lat, lon, code, year) FROM '${DIR}/fixtures/address_t.csv' WITH CSV HEADER;"
 psql -U ${DBROLE} -d ${TESTDBNAME} -c "\copy pggeocoder.address_s(todofuken, shikuchoson, lat, lon, code, year) FROM '${DIR}/fixtures/address_s.csv' WITH CSV HEADER;"
