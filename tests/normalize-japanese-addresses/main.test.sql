@@ -30,9 +30,7 @@ BEGIN
     -- CASE WHEN x = -999 THEN NULL
     --   ELSE X
     -- END::double precision AS lng,
-    CASE WHEN code = -99 THEN 0
-      ELSE 6 - code
-    END::smallint AS level
+    code::smallint AS level
   INTO res
   FROM geocoder(address);
 
