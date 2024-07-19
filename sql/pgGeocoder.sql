@@ -435,7 +435,8 @@ BEGIN
     FROM pggeocoder.address_o WHERE 
     todofuken = r_todofuken AND
     tr_shikuchoson = t_shikuchoson AND
-    strpos(tmpaddr,tr_ooaza) >= 1 ORDER BY length DESC,pos DESC LIMIT 1; 
+    strpos(tmpaddr,tr_ooaza) >= 1 
+    ORDER BY length DESC,pos DESC,year DESC LIMIT 1; 
   ELSE      
     --
     -- the 'Order By length' slows down the operation a bit
@@ -444,7 +445,8 @@ BEGIN
     SELECT INTO rec *,length(tr_ooaza) AS length FROM pggeocoder.address_o WHERE 
      todofuken = r_todofuken AND
      tr_shikuchoson = t_shikuchoson AND
-     strpos(tmpaddr,tr_ooaza) = 1 ORDER BY length DESC LIMIT 1; 
+     strpos(tmpaddr,tr_ooaza) = 1 
+     ORDER BY length DESC,year DESC LIMIT 1; 
   END IF;
 
   IF FOUND THEN
@@ -550,7 +552,8 @@ BEGIN
   tmpstr1 := 'SELECT * FROM '|| preftab ||' WHERE '  ||
    'tr_shikuchoson = ' || quote_literal(shikuchoson) || ' AND ' ||
    'tr_ooaza       = ' || quote_literal(ooaza)       || ' AND ' ||
-   'chiban         = ' || quote_literal(tmpstr3);
+   'chiban         = ' || quote_literal(tmpstr3) || 
+   ' ORDER BY year DESC';
 
    EXECUTE tmpstr1 into rec;
       
