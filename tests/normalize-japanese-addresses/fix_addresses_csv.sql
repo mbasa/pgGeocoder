@@ -102,15 +102,19 @@ $$ LANGUAGE plpgsql;
 
 SELECT delete_csv_addresses_not_in_isj();
 
--- CREATE OR REPLACE FUNCTION fix_csv_input_to_match_isj() RETURNS VOID AS $$
--- BEGIN
---   UPDATE normalize_japanese_addresses_temp
---     SET input = replace(input, '新宿区三栄町', '新宿区四谷三栄町')
---     WHERE input LIKE '%新宿区三栄町%';
--- END;
--- $$ LANGUAGE plpgsql;
+-- FIXME: https://github.com/mbasa/pgGeocoder/issues/17#issuecomment-2245157055
+DELETE FROM normalize_japanese_addresses_temp
+  WHERE input IN ('千葉県流山市鰭ケ崎１７６１－３', '千葉県流山市鰭ケ崎４８７－１');
 
--- SELECT fix_csv_input_to_match_isj();
+CREATE OR REPLACE FUNCTION fix_csv_input_to_match_isj() RETURNS VOID AS $$
+BEGIN
+  UPDATE normalize_japanese_addresses_temp
+    SET input = replace(input, '新宿区三栄町', '新宿区四谷三栄町')
+    WHERE input LIKE '%新宿区三栄町%';
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT fix_csv_input_to_match_isj();
 
 CREATE OR REPLACE FUNCTION fix_csv_oaza_to_include_koaza() RETURNS VOID AS $$
 BEGIN
