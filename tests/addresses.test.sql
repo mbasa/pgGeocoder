@@ -2,7 +2,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-CREATE TEMP TABLE normalize_japanese_addresses_test (
+CREATE TEMP TABLE addresses_test_temp (
   input text,
   pref text,
   city text,
@@ -10,9 +10,9 @@ CREATE TEMP TABLE normalize_japanese_addresses_test (
   other text
 );
 
-\copy normalize_japanese_addresses_test FROM 'addresses2023.csv' WITH CSV HEADER;
+\copy addresses_test_temp FROM 'addresses2023.csv' WITH CSV HEADER;
 
-SELECT COUNT(*) FROM normalize_japanese_addresses_test;
+SELECT COUNT(*) FROM addresses_test_temp;
 \gset
 SELECT plan(:count);
 
@@ -21,7 +21,7 @@ DECLARE
   data record;
   res record;
 BEGIN
-  FOR data IN SELECT * FROM normalize_japanese_addresses_test LOOP
+  FOR data IN SELECT * FROM addresses_test_temp LOOP
     -- TODO: How and when check last other column ?
     SELECT
       todofuken::text AS pref,
