@@ -1,0 +1,66 @@
+name: Test Ubuntu
+
+on:
+  push:
+  pull_request:
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+  test-ubuntu:
+    runs-on: ${{ matrix.os }}
+  
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04]
+
+    steps:
+      - name: Checkout pgGeocoder
+        uses: actions/checkout@v4
+
+      - name: Set PostgreSQL/PostGIS major version
+        run: |
+          pg_major=$(psql --version | grep -Po '(?<=psql \(PostgreSQL\) )[^;]+(?=\.\d+ \()')
+          echo "PG_MAJOR=${pg_major}" >> $GITHUB_ENV
+          echo "POSTGIS_MAJOR=3" >> $GITHUB_ENV
+
+      - name: Add PostgreSQL APT repository
+        run: |
+          sudo apt-get install curl ca-certificates gnupg
+          curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ \
+            $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+  
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libtap-parser-sourcehandler-pgtap-perl \
+            postgresql-${PG_MAJOR} \
+            postgresql-${PG_MAJOR}-pgtap \
+            postgresql-${PG_MAJOR}-postgis-${POSTGIS_MAJOR} \
+            postgresql-${PG_MAJOR}-postgis-${POSTGIS_MAJOR}-scripts
+
+      - name: Start PostgreSQL (with trust authentication)
+        run: |
+          sudo sed -i "s/\(peer\|scram-sha-256\)$/trust/g" "/etc/postgresql/${PG_MAJOR}/main/pg_hba.conf"
+          sudo cat "/etc/postgresql/${PG_MAJOR}/main/pg_hba.conf"
+          sudo systemctl start postgresql.service
+
+      - name: Wait PostgreSQL launch
+        run: |
+          pg_isready -U postgres -h localhost -p 5432
+          psql -U postgres -h localhost -p 5432 -c "SELECT version();"
+
+      - name: Set up database
+        run: |
+          cp .env.example .env
+          cp tests/.env.test tests/.env
+          bash tests/create_test_db_from_fixtures.sh
+      
+      - name: Run test
+        run: |
+          cd tests
+          pg_prove -U postgres -h localhost -p 5432 -d addresses_test addresses.test.sql

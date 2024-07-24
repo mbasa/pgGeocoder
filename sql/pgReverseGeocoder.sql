@@ -61,11 +61,24 @@ DECLARE
   output    geores;
   s_flag    boolean;
   s_bdry    RECORD;
+  matching_nomatch     integer;
+  matching_todofuken   integer;
+  matching_shikuchoson integer;
+  matching_ooaza       integer;
+  matching_chiban      integer;
+  matching_pinpnt      integer;
 BEGIN
 
   s_flag := FALSE;
 
-  output.code      := -9;
+  matching_nomatch     := 0;
+  matching_todofuken   := 1;
+  matching_shikuchoson := 2;
+  matching_ooaza       := 3;
+  matching_chiban      := 4;
+  matching_pinpnt      := 5;
+
+  output.code      := matching_nomatch;
   output.x         := -999;
   output.y         := -999;
   output.address   := 'なし';
@@ -84,7 +97,7 @@ BEGIN
       ORDER BY st_distance(point,geog) LIMIT 1;
 
   IF FOUND THEN
-      output.code       := 1;
+      output.code       := matching_pinpnt;
       output.x          := record.lon;
       output.y          := record.lat;
       output.address    := record.address;
@@ -107,7 +120,7 @@ BEGIN
       ORDER BY dist LIMIT 1;
       
     IF FOUND THEN
-      output.code       := 2;
+      output.code       := matching_chiban;
       output.x          := record.lon;
       output.y          := record.lat;
       output.address    := record.address;
@@ -127,7 +140,7 @@ BEGIN
         ORDER BY dist LIMIT 1;
         
       IF FOUND THEN 
-        output.code       := 3;
+        output.code       := matching_ooaza;
         output.x          := record.lon;
         output.y          := record.lat;
         output.address    := record.address;
@@ -153,7 +166,7 @@ BEGIN
         FROM pggeocoder.address_s AS a
         WHERE st_intersects(a.geog, s_bdry.geom::geography);
       IF FOUND THEN
-        output.code       := 4;
+        output.code       := matching_shikuchoson;
         output.x          := record.lon;
         output.y          := record.lat;
         output.address    := record.address;

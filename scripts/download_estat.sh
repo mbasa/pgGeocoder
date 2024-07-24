@@ -1,6 +1,6 @@
 #!/bin/bash
 # ------------------------------------------------------------------------------
-# Copyright(c) 2013-2021 Georepublic
+# Copyright(c) 2013- Georepublic
 #
 # Usage:
 # ------
@@ -8,7 +8,7 @@
 #
 # Examples:
 # ---------
-#  bash scripts/download_estat.sh 2015
+#  bash scripts/download_estat.sh 2020
 #
 # ------------------------------------------------------------------------------
 
@@ -16,7 +16,8 @@ set -e # Exit script immediately on first error.
 #set -x # Print commands and their arguments as they are executed.
 
 YEAR_TCODES=(
-  "2015 A002005212015"
+  "2020 A002005212020"
+  "2015 A002005212015" # JGD2011 datum support started from 2015
   #"2010 A002005212010"
   #"2005 A002005212005"
   #"2000 A002005512000"
@@ -24,7 +25,7 @@ YEAR_TCODES=(
 
 function exit_with_usage()
 {
-  echo "Usage: bash scripts/download_estat.sh [Census Year (ex. 2019)]" 1>&2
+  echo "Usage: bash scripts/download_estat.sh [Census Year (ex. 2020)]" 1>&2
   for i in "${YEAR_TCODES[@]}"; do
     year_tcode=(`echo "${i}"`)
     year="${year_tcode[0]}"
@@ -71,11 +72,11 @@ BASE_URL="https://www.e-stat.go.jp/gis/statmap-search/data"
 echo -e "Downloading zip files and extracting shp files..."
 for pref_code in $(seq -w 1 47); do
   # echo "Downloading prefecture ${i} in ${tcode} ..."
-  url="${BASE_URL}?dlserveyId=${tcode}&code=${pref_code}&coordSys=1&format=shape&downloadType=5"
-  zip="${OUT_ZIP_DIR}/${tcode}DDSWC${pref_code}.zip"
+  url="${BASE_URL}?dlserveyId=${tcode}&code=${pref_code}&coordSys=1&format=shape&downloadType=5&datum=2011"
+  zip="${OUT_ZIP_DIR}/${tcode}DDSWC${pref_code}-JGD2011.zip"
   if [ ! -e "${zip}" ] ; then
     curl -s "${url}" > "${zip}"
-    sleep 2
+    sleep 5
   fi
   unzip -qq -jo ${zip} -d ${OUT_SHP_DIR}
   echo -ne "."

@@ -3,22 +3,25 @@
 
 # Inspired by https://github.com/IMI-Tool-Project/imi-enrichment-address/blob/master/tools/download.sh
 
-# 2020(令和2年) ~ 2015(平成27年)
+# 2023(令和5年) ~ 2015(平成27年)
 # Don't support <= H20, because oaza level data is not completed
 # "[year] [era_year] [oaza_ver] [gaiku_ver]"
 YEAR_VERSIONS=(
+  "2023 R5  17.0b 22.0a"
+  "2022 R4  16.0b 21.0a"
+  "2021 R3  15.0b 20.0a"
   "2020 R2  14.0b 19.0a"
   "2019 R1  13.0b 18.0a"
   "2018 H30 12.0b 17.0a"
   "2017 H29 11.0b 16.0a"
   "2016 H28 10.0b 15.0a"
   "2015 H27 09.0b 14.0a"
-  #"2014 H26 08.0b 13.0a"
-  #"2013 H25 07.0b 12.0a"
-  #"2012 H24 06.0b 11.0a"
-  #"2011 H23 05.0b 10.0a"
-  #"2010 H22 04.0b 09.0a"
-  #"2009 H21 03.0b 08.0a"
+  "2014 H26 08.0b 13.0a"
+  "2013 H25 07.0b 12.0a"
+  "2012 H24 06.0b 11.0a"
+  "2011 H23 05.0b 10.0a"
+  "2010 H22 04.0b 09.0a"
+  "2009 H21 03.0b 08.0a"
 )
 
 function exit_with_usage()

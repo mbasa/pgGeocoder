@@ -5,7 +5,7 @@ source .env
 
 function exit_with_usage()
 {
-  echo "Usage: bash scripts/import_estat.sh [Year (ex. 2019)]" 1>&2
+  echo "Usage: bash scripts/import_estat.sh [Year (ex. 2020)]" 1>&2
   exit 1
 }
 
