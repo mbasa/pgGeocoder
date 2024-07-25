@@ -15,9 +15,8 @@ jobs:
     steps:
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "README.md,LICENSE.TXT,.env.example,benchmark,data-patches,scripts,sql"
-        #replacesArtifacts: true
-        tag: "PgGeocoder-run${{ github.run_number }}"
+        artifacts: "README.md,LICENSE.TXT,.env.example,benchmark/*,data-patches/*,scripts/*,sql/*"
+        tag: "run${{ github.run_number }}"
         name: "PgGeocoder"
         makeLatest: true        
         allowUpdates: false
