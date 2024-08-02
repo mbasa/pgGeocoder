@@ -447,6 +447,18 @@ BEGIN
      tr_shikuchoson = t_shikuchoson AND
      strpos(tmpaddr,tr_ooaza) = 1 
      ORDER BY length DESC,year DESC LIMIT 1; 
+
+     --
+     -- 2nd Searching for correct District ('郡')
+     -- 
+     IF NOT FOUND AND t_shikuchoson ~ '郡' THEN    
+       SELECT INTO rec *,length(tr_ooaza) AS length 
+       FROM pggeocoder.address_o WHERE 
+       tr_shikuchoson LIKE '%郡'||split_part(t_shikuchoson,'郡',2) AND
+       strpos(tmpaddr,tr_ooaza) = 1 
+       ORDER BY length DESC,year DESC LIMIT 1;
+     END IF;
+
   END IF;
 
   IF FOUND THEN
