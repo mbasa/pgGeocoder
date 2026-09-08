@@ -133,8 +133,33 @@ DECLARE
   arrc      integer;
   arrl      integer;
 BEGIN
-  
-  address := translate(paddress,
+
+  --
+  -- Protect kanji numerals that are glued onto a preceding digit, eg.
+  -- the '三' in '１三和マンション' (Sanwa Mansion), possibly with
+  -- whitespace in between (eg. '１ 三和マンション'). Left alone, the
+  -- blanket kanji->arabic translate below turns '三' into '3', and
+  -- callers of normalizeAddr() strip whitespace before extracting the
+  -- banchi/go number, so even a space-separated '三和...' ends up
+  -- glued to the real number (18-1 + 三和... becoming 18-13).
+  -- Legitimate address numerals never have a kanji numeral following
+  -- an arabic digit like this (with or without whitespace between
+  -- them), so it is safe to mask these occurrences here and restore
+  -- the original kanji afterwards.
+  --
+  address := paddress;
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))一', E'\\1\\2\\3\\4', 'g');
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))二', E'\\1\\2\\3\\4', 'g');
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))三', E'\\1\\2\\3\\4', 'g');
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))四', E'\\1\\2\\3\\4', 'g');
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))五', E'\\1\\2\\3\\4', 'g');
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))六', E'\\1\\2\\3\\4', 'g');
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))七', E'\\1\\2\\3\\4', 'g');
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))八', E'\\1\\2\\3\\4', 'g');
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))九', E'\\1\\2\\3\\4', 'g');
+  address := regexp_replace(address, '(?:([0123456789０１２３４５６７８９〇])([ 　]*)|([一二三四五六七八九十])([ 　]+))十', E'\\1\\2\\3\\4', 'g');
+
+  address := translate(address,
       '?ｰ―‐−－ーのノ１２３４５６７８９０〇一二三四五六七八九十丁目',
       '---------12345678900123456789X-');
 
@@ -234,6 +259,8 @@ BEGIN
   --
   address := regexp_replace(address,' \d*F' ,' nF');
   address := regexp_replace(address,'　\d*F' ,' nF');
+  address := regexp_replace(address,' \d*Ｆ' ,' nF');
+  address := regexp_replace(address,'　\d*Ｆ',' nF');
   address := regexp_replace(address,' \W*Ｆ' ,' nF');
   address := regexp_replace(address,'　\W*Ｆ',' nF');
   address := regexp_replace(address,' \W*階' ,' nF');
@@ -260,7 +287,15 @@ BEGIN
     tmparr  := string_to_array( tmpstr,NULL );
     address := regexp_replace(address,tmpstr,tmparr[1]||'-'||tmparr[2]||tmparr[4]);
   END IF;
-  
+
+  --
+  -- Restore kanji numerals masked above since they belong to proper
+  -- nouns (eg. building names), not address numerals.
+  --
+  address := translate(address,
+      E'',
+      '一二三四五六七八九十');
+
   RETURN address;
 
 END;
@@ -530,7 +565,7 @@ BEGIN
 
   address := normalizeAddr( paddress );
   address := replace(address,' ','');
-  address := replace(address,'　','');  
+  address := replace(address,'　','');
 
   ooaza := replace(r_ooaza,' ','');
   ooaza := replace(ooaza,'　','');
